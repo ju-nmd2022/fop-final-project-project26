@@ -6,6 +6,7 @@ let mainCharacterUp;
 let mainCharacter;
 let character1;
 let grannyAni;
+
 // let x = 50;
 // let y = 50;
 let yMainCharacter = 100;
@@ -13,6 +14,8 @@ let xMainCharacter = 100;
 // let hero;
 let bullets = [];
 let enemies = [];
+let button1;
+let button2;
 
 function preload() {
   mainCharacter = loadImage("character1.png");
@@ -42,6 +45,22 @@ function setup() {
   mainCharacterSprite = new Sprite(xMainCharacter, yMainCharacter, 100, 100);
   mainCharacterSprite.addAni("down", mainCharacterDown);
   mainCharacterSprite.addAni("up", mainCharacterUp);
+  //button1
+  button1 = createButton("Sure!");
+  button1.mousePressed(dialogWithGranny2);
+  button1.position(550, 850);
+  button1.size(100, 30);
+  button1.style("background-color", "black");
+  button1.style("color", "white");
+  button1.hide();
+  //button2
+  button2 = createButton("Ok, no problem!");
+  button2.mousePressed(dialogWithGranny2);
+  button2.position(550, 830);
+  button2.size(100, 50);
+  button2.style("background-color", "black");
+  button2.style("color", "white");
+  button2.hide();
 }
 
 function keyPressed() {
@@ -97,21 +116,14 @@ function shooterGameScreen() {
 }
 function dialogWithGrannyRect() {
   fill(0);
-  rect(100, 600, 600, 600);
+  rect(0, 600, 800, 600);
 }
 function dialogWithGranny() {
-  let dialogWithGrannyText1 = "It's text 1!";
+  let dialogWithGrannyText1 = "Hi Jane! I have a special mission for you";
   let numChars = min(dialogWithGrannyText1.length, floor(frameCount / 10));
   fill(255);
   textSize(20);
-  text(dialogWithGrannyText1.substring(0, numChars), 200, 700);
-  let button1 = createButton("Yes");
-  button1.mousePressed(dialogWithGranny2);
-  button1.position(550, 750);
-  button1.size(100, 30);
-  button1.style("background-color", "black");
-
-  button1.style("color", "white");
+  text(dialogWithGrannyText1.substring(0, numChars), 50, 700);
 }
 
 let state = "dialogWithGrannyState";
@@ -133,26 +145,24 @@ function draw() {
     animation(grannyAni, 200, 200);
     dialogWithGrannyRect();
     dialogWithGranny();
+    button1.show();
   }
   if (state === "dialogWithGranny2State") {
     clear();
     animation(grannyAni, 200, 200);
     dialogWithGrannyRect();
     dialogWithGranny2();
+    button1.hide();
+    button2.show();
   }
 }
 
 function dialogWithGranny2() {
   state = "dialogWithGranny2State";
   let dialogWithGrannyText2 =
-    "It's text 2!It's text 2!It's text 2!It's text 2!";
+    "Here, I baked some cookies for your mom, could you carry it over to her?";
   let numChars2 = min(dialogWithGrannyText2.length, floor(frameCount / 10));
   fill(255);
   textSize(20);
-  text(dialogWithGrannyText2.substring(0, numChars2), 200, 700);
-  let button2 = createButton("Ok");
-  button2.position(550, 750);
-  button2.size(100, 30);
-  button2.style("background-color", "white");
-  button2.style("color", "black");
+  text(dialogWithGrannyText2.substring(0, numChars2), 50, 700);
 }
