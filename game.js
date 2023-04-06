@@ -1,27 +1,25 @@
 let c;
 let bg1;
-let mainCharacterSprite;
-let mainCharacterDown;
-let mainCharacterUp;
-let mainCharacter;
-let character1;
+let mainCharacterAni;
 let grannyAni;
-
-// let x = 50;
-// let y = 50;
+let angryGrannyAni;
 let yMainCharacter = 100;
 let xMainCharacter = 100;
-// let hero;
 let bullets = [];
 let enemies = [];
 let button1;
 let button2;
+let button3;
+let button4;
+let button5;
+
+let mainCharacterAniMovement = true;
 
 function preload() {
-  mainCharacter = loadImage("character1.png");
-  character1 = loadImage("character2.png");
   bg1 = loadImage("room1.gif");
-  mainCharacterDown = loadAnimation(
+
+  // main character animation
+  mainCharacterAni = loadAnimation(
     "character1Sprites/character1SpriteFront1.png",
     "character1Sprites/character1SpriteFront2.png",
     "character1Sprites/character1SpriteFront3.png",
@@ -29,57 +27,60 @@ function preload() {
     "character1Sprites/character1SpriteFront5.png",
     "character1Sprites/character1SpriteFront6.png"
   );
-  mainCharacterUp = loadAnimation(
-    "character1Sprites/character1SpriteBack1.png",
-    "character1Sprites/character1SpriteBack2.png",
-    "character1Sprites/character1SpriteBack3.png"
-  );
-  grannyAni = loadAnimation("cat.png", "dog.png");
+  mainCharacterAni.frameDelay = 10;
+
+  // animation for dialog with grandma (we will change pictures ofc)
+  grannyAni = loadAnimation("granny/cat.png", "granny/dog.png");
   grannyAni.frameDelay = 10;
 
-  // hero.anis.offset.y = 2;
+  //
+  angryGrannyAni = loadAnimation(
+    "angrygranny/angrygranny1.png",
+    "angrygranny/angrygranny2.png"
+  );
+  angryGrannyAni.frameCount = 10;
 }
 
 function setup() {
+  noSmooth();
   c = createCanvas(800, 800);
-  mainCharacterSprite = new Sprite(xMainCharacter, yMainCharacter, 100, 100);
-  mainCharacterSprite.addAni("down", mainCharacterDown);
-  mainCharacterSprite.addAni("up", mainCharacterUp);
-  //button1
+  // button1, I added classes to button, it's better to stylize them in css
   button1 = createButton("Sure!");
   button1.mousePressed(dialogWithGranny2);
-  button1.position(550, 850);
-  button1.size(100, 30);
-  button1.style("background-color", "black");
-  button1.style("color", "white");
+  button1.position(550, 830);
+  button1.addClass("button1");
   button1.hide();
+
   //button2
   button2 = createButton("Ok, no problem!");
-  button2.mousePressed(dialogWithGranny2);
+  button2.mousePressed(happyGranny);
   button2.position(550, 830);
-  button2.size(100, 50);
-  button2.style("background-color", "black");
-  button2.style("color", "white");
   button2.hide();
+  button2.addClass("button2");
+
+  // button3
+  button3 = createButton("Ehhh, I'm too busy grandma :/");
+  button3.mousePressed(angryGranny);
+  button3.position(1000, 830);
+  button3.hide();
+  button3.addClass("button3");
+
+  // button4
+  button4 = createButton("Okay, okay...");
+  button4.mousePressed(happyGranny);
+  button4.position(600, 830);
+  button4.hide();
+  button4.addClass("button4");
+
+  // button5
+  button5 = createButton("Thanks grandma! Have a nice day :)!");
+  button5.mousePressed(theEndOfTheDialogWithGranny);
+  button5.position(550, 830);
+  button5.hide();
+  button5.addClass("button5");
 }
 
-function keyPressed() {
-  // mainCharacterSprite.animation.stop();
-  if (key === UP_ARROW) {
-    mainCharacterSprite.yMainCharacter -= 1;
-    mainCharacterSprite.changeAnimation("up");
-    mainCharacterSprite.animation.play();
-  }
-  if (key === DOWN_ARROW) {
-    mainCharacterSprite.yMainCharacter += 1;
-    mainCharacterSprite.changeAnimation("down");
-    mainCharacterSprite.animation.play();
-  }
-}
-function keyReleased() {
-  mainCharacterSprite.animation.stop();
-}
-
+// basics of shooter game screen
 function shooterGameScreen() {
   background(0);
   ellipse(mouseX, height - 100, 25);
@@ -114,28 +115,47 @@ function shooterGameScreen() {
     enemies.push(enemy);
   }
 }
+// black rectangle when you ar etalking with granny
 function dialogWithGrannyRect() {
   fill(0);
   rect(0, 600, 800, 600);
 }
+
 function dialogWithGranny() {
   let dialogWithGrannyText1 = "Hi Jane! I have a special mission for you";
   let numChars = min(dialogWithGrannyText1.length, floor(frameCount / 10));
   fill(255);
-  textSize(20);
+  textFont("VT323");
+  textSize(30);
   text(dialogWithGrannyText1.substring(0, numChars), 50, 700);
 }
 
-let state = "dialogWithGrannyState";
+let state = "room";
 function draw() {
   if (state === "room") {
     background(bg1);
-    // image(mainCharacter, x, y, 100, 100);
-    // animation(mainCharacterSprite);
+    button5.hide();
+    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    if ((mainCharacterAniMovement = true)) {
+      if (kb.holding("right")) {
+        xMainCharacter += 1;
+      }
+      if (kb.holding("left")) {
+        xMainCharacter -= 1;
+      }
+      if (kb.holding("up")) {
+        yMainCharacter -= 1;
+      }
+      if (kb.holding("down")) {
+        yMainCharacter += 1;
+      }
+    }
+    if (xMainCharacter > 400 && yMainCharacter > 400) {
+      buttonTalkWithGranny.show();
+    }
   }
   if (state === "forestWithHouse") {
     background(0);
-    // image(mainCharacterSprite, xMainCharacter, yMainCharacter, 100, 100);
   }
   if (state === "shooterGameScreenState") {
     shooterGameScreen();
@@ -146,6 +166,7 @@ function draw() {
     dialogWithGrannyRect();
     dialogWithGranny();
     button1.show();
+    button3.show();
   }
   if (state === "dialogWithGranny2State") {
     clear();
@@ -153,7 +174,28 @@ function draw() {
     dialogWithGrannyRect();
     dialogWithGranny2();
     button1.hide();
+    button3.show();
     button2.show();
+  }
+  if (state === "angryGrannyState") {
+    clear();
+    animation(angryGrannyAni, 300, 300);
+    dialogWithGrannyRect();
+    angryGranny();
+    button1.hide();
+    button2.hide();
+    button3.hide();
+    button4.show();
+  }
+  if (state === "happyGrannyState") {
+    animation(grannyAni, 200, 200);
+    dialogWithGrannyRect();
+    happyGranny();
+    button1.hide();
+    button2.hide();
+    button3.hide();
+    button4.hide();
+    button5.show();
   }
 }
 
@@ -165,4 +207,24 @@ function dialogWithGranny2() {
   fill(255);
   textSize(20);
   text(dialogWithGrannyText2.substring(0, numChars2), 50, 700);
+}
+function angryGranny() {
+  state = "angryGrannyState";
+  let dialogWithAngryGrannyText =
+    "You ungrateful kiddo, take those cookies to your mother RIGHT NOW!!!";
+  let numChars3 = min(dialogWithAngryGrannyText.length, floor(frameCount / 10));
+  fill(255);
+  textSize(20);
+  text(dialogWithAngryGrannyText.substring(0, numChars3), 50, 700);
+}
+function happyGranny() {
+  state = "happyGrannyState";
+  let dialogWithHappyGrannyText = "Thank you honey :)! Here you have cookies!";
+  let numChars4 = min(dialogWithHappyGrannyText.length, floor(frameCount / 10));
+  fill(255);
+  textSize(20);
+  text(dialogWithHappyGrannyText.substring(0, numChars4), 50, 700);
+}
+function theEndOfTheDialogWithGranny() {
+  state = "room";
 }
