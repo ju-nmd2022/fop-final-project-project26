@@ -1,6 +1,7 @@
 let c;
 let bg1;
 let mainCharacterAni;
+let grannyWatchingTv;
 let grannyAni;
 let angryGrannyAni;
 let yMainCharacter = 100;
@@ -16,16 +17,14 @@ let button5;
 let mainCharacterAniMovement = true;
 
 function preload() {
-  bg1 = loadImage("room1.gif");
+  bg1 = loadImage("locations/room.png");
+
+  grannyWatchingTv = loadAnimation("grannyWatchingTv/grandmaWatchingTv.png");
 
   // main character animation
   mainCharacterAni = loadAnimation(
-    "character1Sprites/character1SpriteFront1.png",
-    "character1Sprites/character1SpriteFront2.png",
-    "character1Sprites/character1SpriteFront3.png",
-    "character1Sprites/character1SpriteFront4.png",
-    "character1Sprites/character1SpriteFront5.png",
-    "character1Sprites/character1SpriteFront6.png"
+    "mainCharacterAni/mainCharacterAni1.png",
+    "mainCharacterAni/mainCharacterAni2.png"
   );
   mainCharacterAni.frameDelay = 10;
 
@@ -44,6 +43,7 @@ function preload() {
 function setup() {
   noSmooth();
   c = createCanvas(800, 800);
+  noSmooth();
   // button1, I added classes to button, it's better to stylize them in css
   button1 = createButton("Sure!");
   button1.mousePressed(dialogWithGranny2);
@@ -68,14 +68,14 @@ function setup() {
   // button4
   button4 = createButton("Okay, okay...");
   button4.mousePressed(happyGranny);
-  button4.position(600, 830);
+  button4.position(750, 830);
   button4.hide();
   button4.addClass("button4");
 
   // button5
   button5 = createButton("Thanks grandma! Have a nice day :)!");
   button5.mousePressed(theEndOfTheDialogWithGranny);
-  button5.position(550, 830);
+  button5.position(750, 830);
   button5.hide();
   button5.addClass("button5");
 }
@@ -136,22 +136,32 @@ function draw() {
     background(bg1);
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    animation(grannyWatchingTv, 630, 400);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += 1;
+        xMainCharacter += 2;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= 1;
+        xMainCharacter -= 2;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= 1;
+        yMainCharacter -= 2;
       }
       if (kb.holding("down")) {
-        yMainCharacter += 1;
+        yMainCharacter += 2;
       }
     }
-    if (xMainCharacter > 400 && yMainCharacter > 400) {
-      buttonTalkWithGranny.show();
+    if (xMainCharacter < 50) {
+      xMainCharacter += 1;
+    }
+    if (xMainCharacter > 750) {
+      xMainCharacter -= 1;
+    }
+    if (yMainCharacter < 0) {
+      yMainCharacter += 1;
+    }
+    if (yMainCharacter > 750) {
+      yMainCharacter -= 1;
     }
   }
   if (state === "forestWithHouse") {
@@ -205,7 +215,7 @@ function dialogWithGranny2() {
     "Here, I baked some cookies for your mom, could you carry it over to her?";
   let numChars2 = min(dialogWithGrannyText2.length, floor(frameCount / 10));
   fill(255);
-  textSize(20);
+  textSize(30);
   text(dialogWithGrannyText2.substring(0, numChars2), 50, 700);
 }
 function angryGranny() {
@@ -214,7 +224,7 @@ function angryGranny() {
     "You ungrateful kiddo, take those cookies to your mother RIGHT NOW!!!";
   let numChars3 = min(dialogWithAngryGrannyText.length, floor(frameCount / 10));
   fill(255);
-  textSize(20);
+  textSize(30);
   text(dialogWithAngryGrannyText.substring(0, numChars3), 50, 700);
 }
 function happyGranny() {
@@ -222,7 +232,7 @@ function happyGranny() {
   let dialogWithHappyGrannyText = "Thank you honey :)! Here you have cookies!";
   let numChars4 = min(dialogWithHappyGrannyText.length, floor(frameCount / 10));
   fill(255);
-  textSize(20);
+  textSize(30);
   text(dialogWithHappyGrannyText.substring(0, numChars4), 50, 700);
 }
 function theEndOfTheDialogWithGranny() {
