@@ -6,7 +6,7 @@ let grannyAni;
 let angryGrannyAni;
 let yMainCharacter = 100;
 let xMainCharacter = 100;
-let moveMainCaharcter = 2;
+let moveMainCharacter = 2;
 let cloud;
 let cookie;
 let forest;
@@ -25,6 +25,9 @@ let button3;
 let button4;
 let button5;
 let button6;
+//button for talking with ghost
+let button7;
+//button for 2nd answer to ghost
 
 let xWall1 = 200;
 let yWall1 = 0;
@@ -158,6 +161,20 @@ function setup() {
   button6.position(400, 400);
   button6.hide();
   button6.addClass("button6");
+
+  //button7
+  button7 = createButton("Oh shoot! Who are you?!");
+  button7.mousePressed(dialogWithGhost2);
+  button7.position(750, 830);
+  button7.hide();
+  button7.addClass("button7");
+
+  //button8
+  button8 = createButton("What happened?");
+  // button8.mousePressed(dialogWithGhost3);
+  button8.position(750, 830);
+  button8.hide();
+  button8.addClass("button8");
 }
 
 // basics of shooter game screen
@@ -246,7 +263,7 @@ function forestWithHouse() {
   }
 }
 
-let state = "room";
+let state = "ghostState";
 function draw() {
   if (state === "room") {
     background(bg1);
@@ -404,16 +421,16 @@ function draw() {
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += 5;
+        xMainCharacter += moveMainCaharcter;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= 5;
+        xMainCharacter -= moveMainCaharcter;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= 5;
+        yMainCharacter -= moveMainCaharcter;
       }
       if (kb.holding("down")) {
-        yMainCharacter += 5;
+        yMainCharacter += moveMainCaharcter;
       }
     }
     if (xMainCharacter < 50) {
@@ -433,10 +450,11 @@ function draw() {
     rect(xWall1, yWall1, widthWall1, heightWall1);
     pop();
 
+    //coliding with the 1st wall and coming back to the starting position
+    //it identifies how close the character to the wall
     if (
       xMainCharacter > xWall1 - widthWall1 + 50 &&
       xMainCharacter < xWall1 + widthWall1 + 50 &&
-      yMainCharacter > yWall1 - heightWall1 &&
       yMainCharacter < yWall1 + heightWall1 + 30
     ) {
       xMainCharacter = 100;
@@ -448,11 +466,11 @@ function draw() {
     rect(xWall2, yWall2, widthWall2, heightWall2);
     pop();
 
+    //colliding with 2nd wall
     if (
       xMainCharacter > xWall2 - widthWall2 + 50 &&
       xMainCharacter < xWall2 + widthWall2 + 50 &&
-      yMainCharacter > yWall2 - heightWall2 + 500 &&
-      yMainCharacter < yWall2 + heightWall2
+      yMainCharacter > yWall2 - heightWall2 + 500
     ) {
       xMainCharacter = 100;
       yMainCharacter = 100;
@@ -475,6 +493,7 @@ function draw() {
     fill(255, 0, 0);
     rect(xWall3, yWall3, widthWall3, heightWall3);
     pop();
+    //colliding with 3rd wall
     if (
       xMainCharacter > xWall3 - widthWall3 + 350 &&
       xMainCharacter < xWall3 + widthWall3 &&
@@ -514,8 +533,22 @@ function draw() {
 
   if (state === "ghostState") {
     ghostScreen();
-    scale(1.3);
-    animation(ghostAni, 300, 300);
+    dialogWithGrannyRect();
+    dialogWithGhost();
+    button7.show();
+  }
+  if (state === "dialogWithGhostState") {
+    ghostScreen();
+    dialogWithGrannyRect();
+    dialogWithGhostText2();
+    button7.hide();
+    button8.show();
+  }
+  if (state === "dialogWithGhostState2") {
+    ghostScreen();
+    dialogWithGrannyRect();
+    dialogWithGhost3();
+    button8.hide();
   }
   if (state === "youLost") {
     youLost();
@@ -565,11 +598,47 @@ function theEndOfTheDialogWithGranny() {
   xMainCharacter = 500;
 }
 function ghostScreen() {
+  push();
   background(0);
   noStroke();
+  fill(255, 255, 255);
+  scale(1.3);
+  animation(ghostAni, 300, 300);
   for (let i = 0; i < 200; i++) rect(random(900), random(900), 1, 1500);
+  pop();
 }
 
+function dialogWithGhost() {
+  let dialogWithGhost1 = "Hey? Is there someone here? ";
+  let numCharsGhost1 = min(dialogWithGhost1.length, floor(frameCount / 10));
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text(dialogWithGhost1.substring(0, numCharsGhost1), 50, 700);
+}
+
+function dialogWithGhost2() {
+  state = "dialogWithGhostState2";
+}
+function dialogWithGhostText2() {
+  let dialogWithGhost2 =
+    "I’m Tamashi. I was killed in this maze by evil spirit and his followers.";
+  let numCharsGhost2 = min(dialogWithGhost2.length, floor(frameCount / 10));
+  fill(255);
+  textSize(25);
+  textFont("VT323");
+  text(dialogWithGhost2.substring(0, numCharsGhost2), 50, 700);
+}
+
+function dialogWithGhostText3() {
+  let dialogWithGhost3 =
+    "I’m Tamashi. I was killed in this maze by evil spirit and his followers.";
+  let numCharsGhost3 = min(dialogWithGhost3.length, floor(frameCount / 10));
+  fill(255);
+  textSize(25);
+  textFont("VT323");
+  text(dialogWithGhost3.substring(0, numCharsGhost3), 50, 700);
+}
 function youLost() {
   background(0);
   fill(255, 255, 255);
