@@ -12,6 +12,7 @@ let cookie;
 let forest;
 let ghostAni;
 let shootingCharacter;
+
 // let mySound;
 
 let bullets = [];
@@ -24,21 +25,47 @@ let button3;
 let button4;
 let button5;
 let button6;
-// let xWall1 = 200;
-// let yWall1 = 0;
-// let widthWall1 = 100;
-// let heightWall1 = 400;
 
-class Wall {
-  constructor(x, y, w, h) {
-    (this.x = x), (this.y = y), (this.w = w), (this.h = h);
-  }
-  draw() {
-    fill(255, 255, 255);
-    rect(this.x, this.y, this.w, this.h);
-  }
-}
-let wall1 = new Wall(200, 0, 50, 500);
+let xWall1 = 200;
+let yWall1 = 0;
+let widthWall1 = 100;
+let heightWall1 = 600;
+
+let xObstacle1 = 100;
+let yObstacle1 = 300;
+let widthObstacle1 = 100;
+let heightObstacle1 = 100;
+
+let xWall2 = 500;
+let yWall2 = 300;
+let widthWall2 = 100;
+let heightWall2 = 500;
+
+let xObstacle2 = 400;
+let yObstacle2 = 400;
+let widthObstacle2 = 100;
+let heightObstacle2 = 100;
+
+let xWall3 = 500;
+let yWall3 = 100;
+let widthWall3 = 400;
+let heightWall3 = 100;
+
+let xObstacle3 = 300;
+let yObstacle3 = 210;
+let widthObstacle3 = 100;
+let heightObstacle3 = 100;
+
+// class Wall {
+//   constructor(x, y, w, h) {
+//     (this.x = x), (this.y = y), (this.w = w), (this.h = h);
+//   }
+//   draw() {
+//     fill(255, 255, 255);
+//     rect(this.x, this.y, this.w, this.h);
+//   }
+// }
+// let wall1 = new Wall(200, 0, 50, 500);
 
 let mainCharacterAniMovement = true;
 
@@ -52,7 +79,7 @@ function preload() {
 
   forest = loadImage("locations/forestWithHouse.png");
 
-  grannyWatchingTv = loadAnimation("grannyWatchingTv/grandmaWatchingTv.png");
+  grannyWatchingTvAni = loadAnimation("grannyWatchingTv/grandmaWatchingTv.png");
 
   // main character animation
   mainCharacterAni = loadAnimation(
@@ -72,8 +99,8 @@ function preload() {
   );
   angryGrannyAni.frameCount = 10;
 
-  ghostAni = loadAnimation("ghost/ghost1.png", "ghost/ghost2.png");
-  ghostAni.frameCount = 1;
+  ghostAni = loadAnimation("ghost/ghost.png");
+  ghostAni.frameCount = 10;
 }
 
 function setup() {
@@ -219,14 +246,17 @@ function forestWithHouse() {
   }
 }
 
-let state = "maze";
+let state = "room";
 function draw() {
   if (state === "room") {
     background(bg1);
     // music();
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
-    animation(grannyWatchingTv, 630, 400);
+    push();
+
+    animation(grannyWatchingTvAni, 630, 400);
+    pop();
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
         xMainCharacter += moveMainCaharcter;
@@ -253,13 +283,25 @@ function draw() {
     if (yMainCharacter > 750) {
       yMainCharacter -= 1;
     }
-    if (xMainCharacter > 300 && yMainCharacter > 200 && yMainCharacter < 300) {
+    // if (
+    //   xMainCharacter > 150 &&
+    //   xMainCharacter < 500 &&
+    //   yMainCharacter > 200 &&
+    //   yMainCharacter < 600
+    // )
+    if (
+      xMainCharacter > 100 &&
+      xMainCharacter < 400 &&
+      yMainCharacter > 200 &&
+      yMainCharacter < 300
+    ) {
       cloudText();
     }
     if (xMainCharacter > 500 && yMainCharacter > 300) {
       state = "dialogWithGrannyState";
     }
   }
+
   if (state === "shooterGameScreenState") {
     shooterGameScreen();
     button6.hide();
@@ -357,21 +399,21 @@ function draw() {
   if (state === "maze") {
     background(0);
 
-    wall1.draw();
+    // wall1.draw();
 
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += moveMainCaharcter;
+        xMainCharacter += 5;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= moveMainCaharcter;
+        xMainCharacter -= 5;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= moveMainCaharcter;
+        yMainCharacter -= 5;
       }
       if (kb.holding("down")) {
-        yMainCharacter += moveMainCaharcter;
+        yMainCharacter += 5;
       }
     }
     if (xMainCharacter < 50) {
@@ -386,27 +428,94 @@ function draw() {
     if (yMainCharacter > 750) {
       yMainCharacter -= moveMainCaharcter;
     }
-    if (dist(wall1.x, wall1.y, xMainCharacter, yMainCharacter) < 10) {
+    push();
+    fill(255, 0, 0);
+    rect(xWall1, yWall1, widthWall1, heightWall1);
+    pop();
+
+    if (
+      xMainCharacter > xWall1 - widthWall1 + 50 &&
+      xMainCharacter < xWall1 + widthWall1 + 50 &&
+      yMainCharacter > yWall1 - heightWall1 &&
+      yMainCharacter < yWall1 + heightWall1 + 30
+    ) {
       xMainCharacter = 100;
       yMainCharacter = 100;
     }
-    // if (
-    //   xMainCharacter > xWall1 - widthWall1 &&
-    //   xMainCharacter < xWall1 + widthWall1 &&
-    //   yMainCharacter > yWall1 - heightWall1 &&
-    //   yMainCharacter < yWall1 + heightWall1
-    // ) {
-    //   xMainCharacter = 100;
-    //   yMainCharacter = 100;
-    // }
 
-    // push();
-    // fill(255, 0, 0);
-    // rect(xWall1, yWall1, widthWall1, heightWall1);
-    // pop();
+    push();
+    fill(255, 0, 0);
+    rect(xWall2, yWall2, widthWall2, heightWall2);
+    pop();
+
+    if (
+      xMainCharacter > xWall2 - widthWall2 + 50 &&
+      xMainCharacter < xWall2 + widthWall2 + 50 &&
+      yMainCharacter > yWall2 - heightWall2 + 500 &&
+      yMainCharacter < yWall2 + heightWall2
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    push();
+    fill(255, 255, 255);
+    rect(xObstacle2, yObstacle2, widthObstacle2, heightObstacle2);
+    pop();
+    if (
+      xMainCharacter > xObstacle2 &&
+      xMainCharacter < xObstacle2 + widthObstacle2 &&
+      yMainCharacter > yObstacle2 - heightObstacle2 + 70 &&
+      yMainCharacter < yObstacle2 + heightObstacle2
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+
+    push();
+    fill(255, 0, 0);
+    rect(xWall3, yWall3, widthWall3, heightWall3);
+    pop();
+    if (
+      xMainCharacter > xWall3 - widthWall3 + 350 &&
+      xMainCharacter < xWall3 + widthWall3 &&
+      yMainCharacter > yWall3 - heightWall3 + 70 &&
+      yMainCharacter < yWall3 + heightWall3 + 30
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    push();
+    fill(255, 0, 0);
+    rect(xObstacle1, yObstacle1, widthObstacle1, heightObstacle1);
+    pop();
+    if (
+      xMainCharacter > xObstacle1 &&
+      xMainCharacter < xObstacle1 + widthObstacle1 &&
+      yMainCharacter > yObstacle1 - heightObstacle1 + 70 &&
+      yMainCharacter < yObstacle1 + heightObstacle1
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    push();
+    fill(255, 0, 0);
+    rect(xObstacle3, yObstacle3, widthObstacle3, heightObstacle3);
+    pop();
+    if (
+      xMainCharacter > xObstacle3 &&
+      xMainCharacter < xObstacle3 + widthObstacle3 &&
+      yMainCharacter > yObstacle3 - heightObstacle3 &&
+      yMainCharacter < yObstacle3 + heightObstacle3
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
   }
+
   if (state === "ghostState") {
     ghostScreen();
+    scale(1.3);
+    animation(ghostAni, 300, 300);
   }
   if (state === "youLost") {
     youLost();
@@ -455,16 +564,12 @@ function theEndOfTheDialogWithGranny() {
   yMainCharacter = 500;
   xMainCharacter = 500;
 }
-
 function ghostScreen() {
   background(0);
   noStroke();
   for (let i = 0; i < 200; i++) rect(random(900), random(900), 1, 1500);
-  push();
-  scale(1.3);
-  animation(ghostAni, 300, 300);
-  pop();
 }
+
 function youLost() {
   background(0);
   fill(255, 255, 255);
