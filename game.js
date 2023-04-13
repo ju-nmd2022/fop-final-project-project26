@@ -31,6 +31,8 @@ let button7;
 let button8;
 // button for 3th answer to ghost
 let button9;
+//button for continuing the game after the dialogue with Tamashi
+let button10;
 
 let xWall1 = 200;
 let yWall1 = 0;
@@ -185,6 +187,12 @@ function setup() {
   button9.position(750, 830);
   button9.hide();
   button9.addClass("button9");
+  //button10
+  button10 = createButton("Continue...");
+  button10.mousePressed(continueGame);
+  button10.position(750, 830);
+  button10.hide();
+  button10.addClass("button10");
 }
 
 // basics of shooter game screen
@@ -425,7 +433,7 @@ function draw() {
   }
   if (state === "maze") {
     background(0);
-
+    button10.hide();
     // wall1.draw();
 
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
@@ -564,6 +572,9 @@ function draw() {
   if (state === "dialogWithGhostState3") {
     ghostScreen();
     dialogWithGrannyRect();
+    dialogWithGhostText4();
+    button9.hide();
+    button10.show();
   }
   if (state === "youLost") {
     youLost();
@@ -668,6 +679,21 @@ function dialogWithGhostText3() {
 function dialogWithGhost4() {
   state = "dialogWithGhostState3";
 }
+
+function dialogWithGhostText4() {
+  let dialogWithGhost4 =
+    "Jane, you will face his army in the battle. You have only one chance to get out of here.";
+  let numCharsGhost4 = min(dialogWithGhost4.length, floor(frameCount / 10));
+  fill(255);
+  textSize(20);
+  textFont("VT323");
+  text(dialogWithGhost4.substring(0, numCharsGhost4), 50, 700);
+}
+
+function continueGame() {
+  state = "maze";
+}
+
 function youLost() {
   background(0);
   fill(255, 255, 255);
