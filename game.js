@@ -28,6 +28,9 @@ let button6;
 //button for talking with ghost
 let button7;
 //button for 2nd answer to ghost
+let button8;
+// button for 3th answer to ghost
+let button9;
 
 let xWall1 = 200;
 let yWall1 = 0;
@@ -171,10 +174,17 @@ function setup() {
 
   //button8
   button8 = createButton("What happened?");
-  // button8.mousePressed(dialogWithGhost3);
+  button8.mousePressed(dialogWithGhost3);
   button8.position(750, 830);
   button8.hide();
   button8.addClass("button8");
+
+  //button9
+  button9 = createButton("What?! How?");
+  button9.mousePressed(dialogWithGhost4);
+  button9.position(750, 830);
+  button9.hide();
+  button9.addClass("button9");
 }
 
 // basics of shooter game screen
@@ -547,8 +557,13 @@ function draw() {
   if (state === "dialogWithGhostState2") {
     ghostScreen();
     dialogWithGrannyRect();
-    dialogWithGhost3();
+    dialogWithGhostText3();
     button8.hide();
+    button9.show();
+  }
+  if (state === "dialogWithGhostState3") {
+    ghostScreen();
+    dialogWithGrannyRect();
   }
   if (state === "youLost") {
     youLost();
@@ -618,7 +633,7 @@ function dialogWithGhost() {
 }
 
 function dialogWithGhost2() {
-  state = "dialogWithGhostState2";
+  state = "dialogWithGhostState";
 }
 function dialogWithGhostText2() {
   let dialogWithGhost2 =
@@ -629,15 +644,29 @@ function dialogWithGhostText2() {
   textFont("VT323");
   text(dialogWithGhost2.substring(0, numCharsGhost2), 50, 700);
 }
+function dialogWithGhost3() {
+  state = "dialogWithGhostState2";
+}
 
 function dialogWithGhostText3() {
-  let dialogWithGhost3 =
-    "I’m Tamashi. I was killed in this maze by evil spirit and his followers.";
-  let numCharsGhost3 = min(dialogWithGhost3.length, floor(frameCount / 10));
+  // let dialogWithGhost3 =
+  "I fought with his army and was defeated. Now my soul is forever stuck in this maze and YOU can help both of us.";
+  // let numCharsGhost3 = min(dialogWithGhost3.length, floor(frameCount / 10));
   fill(255);
-  textSize(25);
+  textSize(30);
   textFont("VT323");
-  text(dialogWithGhost3.substring(0, numCharsGhost3), 50, 700);
+  text(
+    "I fought with his army and was defeated. Now my soul is ",
+    50,
+    650,
+    1000,
+    100
+  );
+  text("forever stuck in this maze and YOU can help me!", 50, 700, 1000, 100);
+  // text(dialogWithGhost3.substring(0, numCharsGhost3), 50, 700);
+}
+function dialogWithGhost4() {
+  state = "dialogWithGhostState3";
 }
 function youLost() {
   background(0);
