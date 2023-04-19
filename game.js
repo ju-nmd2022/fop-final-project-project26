@@ -11,7 +11,19 @@ let cloud;
 let cookie;
 let forest;
 let ghostAni;
+let miniGhost;
+let xMiniGhost = 30;
+let yMiniGhost = 500;
+let evilGhost;
+let xEvilGhost = 610;
+let yEvilGhost = 470;
 let shootingCharacter;
+let weapon;
+let xWeapon = 700;
+let yWeapon = 10;
+let ghostEnemy;
+let mazeBg;
+let screenWithMom;
 
 // let mySound;
 
@@ -33,6 +45,8 @@ let button8;
 let button9;
 //button for continuing the game after the dialogue with Tamashi
 let button10;
+
+let button11;
 
 let xWall1 = 200;
 let yWall1 = 0;
@@ -64,21 +78,12 @@ let yObstacle3 = 210;
 let widthObstacle3 = 100;
 let heightObstacle3 = 100;
 
-// class Wall {
-//   constructor(x, y, w, h) {
-//     (this.x = x), (this.y = y), (this.w = w), (this.h = h);
-//   }
-//   draw() {
-//     fill(255, 255, 255);
-//     rect(this.x, this.y, this.w, this.h);
-//   }
-// }
-// let wall1 = new Wall(200, 0, 50, 500);
-
 let mainCharacterAniMovement = true;
 
 function preload() {
   bg1 = loadImage("locations/room.png");
+  mazeBg = loadImage("locations/maze.png");
+  screenWithMom = loadImage("locations/screenWithMom.png");
 
   // mySound = loadSound("musiccc/backgroundMusic.mp3");
 
@@ -87,7 +92,13 @@ function preload() {
 
   forest = loadImage("locations/forestWithHouse.png");
 
-  grannyWatchingTvAni = loadAnimation("grannyWatchingTv/grandmaWatchingTv.png");
+  grannyWatchingTv = loadImage("folderGrannyWatchingTv/grandmaWatchingTv.png");
+
+  miniGhost = loadImage("ghost/miniGhost.png");
+
+  evilGhost = loadImage("ghost/evilGhost.png");
+
+  weapon = loadImage("otherImages/weapon.png");
 
   // main character animation
   mainCharacterAni = loadAnimation(
@@ -105,10 +116,12 @@ function preload() {
     "angrygranny/angrygranny1.png",
     "angrygranny/angrygranny2.png"
   );
-  angryGrannyAni.frameCount = 10;
+  angryGrannyAni.frameDelay = 10;
 
   ghostAni = loadAnimation("ghost/ghost.png");
-  ghostAni.frameCount = 10;
+
+  ghostEnemy = loadAnimation("ghost/evilGhost.png", "ghost/miniGhost.png");
+  ghostEnemy.frameDelay = 20;
 }
 
 function setup() {
@@ -117,9 +130,9 @@ function setup() {
 
   noSmooth();
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 30; i++) {
     let enemy = {
-      x: random(0, width),
+      x: random(100, 700),
       y: random(height - 1200, height - 900),
     };
     enemies.push(enemy);
@@ -160,10 +173,11 @@ function setup() {
   button5.hide();
   button5.addClass("button5");
 
-  // button5
+  // button6
   button6 = createButton("Play again");
   button6.mousePressed(playAgain);
-  button6.position(400, 400);
+  button6.size(170, 80);
+  button6.position(750, 700);
   button6.hide();
   button6.addClass("button6");
 
@@ -193,29 +207,50 @@ function setup() {
   button10.position(750, 830);
   button10.hide();
   button10.addClass("button10");
+  // button11
+  button11 = createButton("Oh, thank you");
+  button11.mousePressed(finalScreen);
+  button11.position(750, 830);
+  button11.hide();
+  button11.addClass("button10");
 }
 
 // basics of shooter game screen
 function shooterGameScreen() {
   background(0);
 
-  ellipse(mouseX, height - 100, 25);
+  animation(mainCharacterAni, mouseX, height - 100);
   for (let bullet of bullets) {
     ellipse(bullet.x, bullet.y, 10);
     bullet.y = bullet.y - 5;
   }
   for (let enemy of enemies) {
-    ellipse(enemy.x, enemy.y, 10);
-    enemy.y = enemy.y + 1;
+    animation(ghostEnemy, enemy.x, enemy.y);
+    enemy.y = enemy.y + 2;
   }
   for (let enemy of enemies) {
     for (let bullet of bullets) {
-      if (dist(enemy.x, enemy.y, bullet.x, bullet.y) < 10) {
+      if (
+        dist(
+          enemy.x,
+
+          enemy.y,
+
+          bullet.x,
+          bullet.y
+        ) < 10
+      ) {
         enemies.splice(enemies.indexOf(enemy), 1);
         score += 1;
       }
       if (dist(enemy.x, enemy.y, mouseX, height - 100) < 10) {
         state = "youLost";
+      }
+      if (enemy.y > 800) {
+        state = "youLost";
+      }
+      if (score > 29) {
+        state = "exitFromTheForest";
       }
     }
   }
@@ -233,55 +268,9 @@ function shooterGameScreen() {
     bullets.push(bullet);
   }
 }
-// black rectangle when you ar etalking with granny
-function dialogWithGrannyRect() {
-  fill(0);
-  rect(0, 600, 800, 600);
-}
 
-function dialogWithGranny() {
-  let dialogWithGrannyText1 = "Hi Jane! I have a special mission for you";
-  let numChars = min(dialogWithGrannyText1.length, floor(frameCount / 10));
-  fill(255);
-  textFont("VT323");
-  textSize(30);
-  text(dialogWithGrannyText1.substring(0, numChars), 50, 700);
-}
-function forestWithHouse() {
-  xMainCharacter = 400;
-  yMainCharacter = 400;
-  image(forest, 0, 0, 800, 800);
-  collectedItems();
-  animation(mainCharacterAni, xMainCharacter, yMainCharacter);
-  if ((mainCharacterAniMovement = true)) {
-    if (kb.holding("right")) {
-      xMainCharacter += 2;
-    }
-    if (kb.holding("left")) {
-      xMainCharacter -= 2;
-    }
-    if (kb.holding("up")) {
-      yMainCharacter -= 2;
-    }
-    if (kb.holding("down")) {
-      yMainCharacter += 2;
-    }
-  }
-  if (xMainCharacter < 50) {
-    xMainCharacter += 1;
-  }
-  if (xMainCharacter > 750) {
-    xMainCharacter -= 1;
-  }
-  if (yMainCharacter < 0) {
-    yMainCharacter += 1;
-  }
-  if (yMainCharacter > 750) {
-    yMainCharacter -= 1;
-  }
-}
+let state = "room";
 
-let state = "ghostState";
 function draw() {
   if (state === "room") {
     background(bg1);
@@ -290,20 +279,20 @@ function draw() {
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     push();
 
-    animation(grannyWatchingTvAni, 630, 400);
+    image(grannyWatchingTv, 480, 280, 300, 300);
     pop();
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += moveMainCaharcter;
+        xMainCharacter += 2;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= moveMainCaharcter;
+        xMainCharacter -= 2;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= moveMainCaharcter;
+        yMainCharacter -= 2;
       }
       if (kb.holding("down")) {
-        yMainCharacter += moveMainCaharcter;
+        yMainCharacter += 2;
       }
     }
     if (xMainCharacter < 50) {
@@ -319,17 +308,61 @@ function draw() {
       yMainCharacter -= 1;
     }
     // if (
-    //   xMainCharacter > 150 &&
-    //   xMainCharacter < 500 &&
+    //   xMainCharacter < 100 &&
+    //   xMainCharacter > 350 &&
     //   yMainCharacter > 200 &&
-    //   yMainCharacter < 600
-    // )
-    if (
-      xMainCharacter > 100 &&
-      xMainCharacter < 400 &&
-      yMainCharacter > 200 &&
-      yMainCharacter < 300
-    ) {
+    //   yMainCharacter < 500
+    // ) {
+    //   xMainCharacter += 2;
+    //   yMainCharacter -= 2;
+    // }
+
+    if (xMainCharacter > 100 && yMainCharacter > 200) {
+      cloudText();
+    }
+    if (xMainCharacter > 500 && yMainCharacter > 300) {
+      state = "dialogWithGrannyState";
+    }
+  }
+  if (state === "newGame") {
+    background(bg1);
+    // music();
+    button5.hide();
+    button6.hide();
+
+    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    push();
+
+    image(grannyWatchingTvAni, 500, 300, 300, 300);
+    pop();
+    if ((mainCharacterAniMovement = true)) {
+      if (kb.holding("right")) {
+        xMainCharacter += 2;
+      }
+      if (kb.holding("left")) {
+        xMainCharacter -= 2;
+      }
+      if (kb.holding("up")) {
+        yMainCharacter -= 2;
+      }
+      if (kb.holding("down")) {
+        yMainCharacter += 2;
+      }
+    }
+    if (xMainCharacter < 50) {
+      xMainCharacter += 1;
+    }
+    if (xMainCharacter > 750) {
+      xMainCharacter -= 1;
+    }
+    if (yMainCharacter < 0) {
+      yMainCharacter += 1;
+    }
+    if (yMainCharacter > 750) {
+      yMainCharacter -= 1;
+    }
+
+    if (xMainCharacter > 100 && xMainCharacter < 600 && yMainCharacter > 200) {
       cloudText();
     }
     if (xMainCharacter > 500 && yMainCharacter > 300) {
@@ -337,10 +370,6 @@ function draw() {
     }
   }
 
-  if (state === "shooterGameScreenState") {
-    shooterGameScreen();
-    button6.hide();
-  }
   if (state === "dialogWithGrannyState") {
     push();
     clear();
@@ -397,19 +426,19 @@ function draw() {
 
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
-    animation(grannyWatchingTv, 630, 400);
+    image(grannyWatchingTvAni, 500, 300, 300, 300);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += moveMainCaharcter;
+        xMainCharacter += 2;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= moveMainCaharcter;
+        xMainCharacter -= 2;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= moveMainCaharcter;
+        yMainCharacter -= 2;
       }
       if (kb.holding("down")) {
-        yMainCharacter += moveMainCaharcter;
+        yMainCharacter += 2;
       }
     }
     if (xMainCharacter < 50) {
@@ -430,41 +459,78 @@ function draw() {
   }
   if (state === "forestWithHouseState") {
     forestWithHouse();
+    collectedItems();
+    // xMainCharacter = 400;
+    // yMainCharacter = 400;
+    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    if ((mainCharacterAniMovement = true)) {
+      if (kb.holding("right")) {
+        xMainCharacter += 2;
+      }
+      if (kb.holding("left")) {
+        xMainCharacter -= 2;
+      }
+      if (kb.holding("up")) {
+        yMainCharacter -= 2;
+      }
+      if (kb.holding("down")) {
+        yMainCharacter += 2;
+      }
+    }
+    if (xMainCharacter < 50) {
+      xMainCharacter += 2;
+    }
+    if (xMainCharacter > 750) {
+      xMainCharacter -= 2;
+    }
+    if (yMainCharacter < 0) {
+      yMainCharacter += 2;
+    }
+    if (yMainCharacter > 750) {
+      yMainCharacter -= 2;
+    }
   }
   if (state === "maze") {
     background(0);
-    button10.hide();
+
+    image(miniGhost, xMiniGhost, yMiniGhost, 150, 150);
+    xMiniGhost += random(-2, 2);
+    yMiniGhost += random(-2, 2);
+    collectedItems();
+    image(weapon, 700, 10, 100, 100);
+
     // wall1.draw();
 
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += moveMainCaharcter;
+        xMainCharacter += 2;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= moveMainCaharcter;
+        xMainCharacter -= 2;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= moveMainCaharcter;
+        yMainCharacter -= 2;
       }
       if (kb.holding("down")) {
-        yMainCharacter += moveMainCaharcter;
+        yMainCharacter += 2;
       }
     }
     if (xMainCharacter < 50) {
-      xMainCharacter += moveMainCaharcter;
+      xMainCharacter += 2;
     }
     if (xMainCharacter > 750) {
-      xMainCharacter -= moveMainCaharcter;
+      xMainCharacter -= 2;
     }
     if (yMainCharacter < 0) {
-      yMainCharacter += moveMainCaharcter;
+      yMainCharacter += 2;
     }
     if (yMainCharacter > 750) {
-      yMainCharacter -= moveMainCaharcter;
+      yMainCharacter -= 2;
     }
+
     push();
-    fill(255, 0, 0);
+    fill(0);
     rect(xWall1, yWall1, widthWall1, heightWall1);
     pop();
 
@@ -480,7 +546,7 @@ function draw() {
     }
 
     push();
-    fill(255, 0, 0);
+    fill(0);
     rect(xWall2, yWall2, widthWall2, heightWall2);
     pop();
 
@@ -494,7 +560,7 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(255, 255, 255);
+    fill(0);
     rect(xObstacle2, yObstacle2, widthObstacle2, heightObstacle2);
     pop();
     if (
@@ -508,7 +574,7 @@ function draw() {
     }
 
     push();
-    fill(255, 0, 0);
+    fill(0);
     rect(xWall3, yWall3, widthWall3, heightWall3);
     pop();
     //colliding with 3rd wall
@@ -522,7 +588,7 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(255, 0, 0);
+    fill(0);
     rect(xObstacle1, yObstacle1, widthObstacle1, heightObstacle1);
     pop();
     if (
@@ -535,7 +601,7 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(255, 0, 0);
+    fill(0);
     rect(xObstacle3, yObstacle3, widthObstacle3, heightObstacle3);
     pop();
     if (
@@ -547,6 +613,25 @@ function draw() {
       xMainCharacter = 100;
       yMainCharacter = 100;
     }
+    if (yMainCharacter > 500 && xMainCharacter > 0) {
+      state = "ghostState";
+    }
+    image(mazeBg, 0, 0, 800, 800);
+    push();
+
+    // Calculate the position of the eyes based on xMainCharacter and yMainCharacter
+    let xEyes = map(xMainCharacter, 0, width, 210, 300);
+    let yEyes = map(yMainCharacter, 0, height, 150, 250);
+    xEyes = constrain(xEyes, 210, 270);
+    yEyes = constrain(yEyes, 130, 180);
+
+    // Draw the red irises with the updated position
+    fill(255, 0, 0);
+    noStroke();
+    ellipse(xEyes - 10, yEyes, 10, 10);
+    ellipse(xEyes + 10, yEyes, 10, 10);
+
+    pop();
   }
 
   if (state === "ghostState") {
@@ -576,20 +661,243 @@ function draw() {
     button9.hide();
     button10.show();
   }
+  if (state === "mazeAfterGhost") {
+    background(0);
+    button10.hide();
+    // wall1.draw();
+    collectedItems();
+    image(weapon, xWeapon, yWeapon, 100, 100);
+    image(evilGhost, xEvilGhost, yEvilGhost, 200, 200);
+    xEvilGhost += random(-2, 2);
+    yEvilGhost += random(-2, 2);
+
+    // if(xWeapon > 699 && yWeapon < 11 && )
+
+    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    if ((mainCharacterAniMovement = true)) {
+      if (kb.holding("right")) {
+        xMainCharacter += 5;
+      }
+      if (kb.holding("left")) {
+        xMainCharacter -= 5;
+      }
+      if (kb.holding("up")) {
+        yMainCharacter -= 5;
+      }
+      if (kb.holding("down")) {
+        yMainCharacter += 5;
+      }
+    }
+    if (xMainCharacter < 50) {
+      xMainCharacter += 2;
+    }
+    if (xMainCharacter > 750) {
+      xMainCharacter -= 2;
+    }
+    if (yMainCharacter < 0) {
+      yMainCharacter += 2;
+    }
+    if (yMainCharacter > 750) {
+      yMainCharacter -= 2;
+    }
+    push();
+    fill(0);
+    rect(xWall1, yWall1, widthWall1, heightWall1);
+    pop();
+
+    //coliding with the 1st wall and coming back to the starting position
+    //it identifies how close the character to the wall
+    if (
+      xMainCharacter > xWall1 - widthWall1 + 50 &&
+      xMainCharacter < xWall1 + widthWall1 + 50 &&
+      yMainCharacter < yWall1 + heightWall1 + 30
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+
+    push();
+    fill(0);
+    rect(xWall2, yWall2, widthWall2, heightWall2);
+    pop();
+
+    //colliding with 2nd wall
+    if (
+      xMainCharacter > xWall2 - widthWall2 + 50 &&
+      xMainCharacter < xWall2 + widthWall2 + 50 &&
+      yMainCharacter > yWall2 - heightWall2 + 500
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    push();
+    fill(0);
+    rect(xObstacle2, yObstacle2, widthObstacle2, heightObstacle2);
+    pop();
+    if (
+      xMainCharacter > xObstacle2 &&
+      xMainCharacter < xObstacle2 + widthObstacle2 &&
+      yMainCharacter > yObstacle2 - heightObstacle2 + 70 &&
+      yMainCharacter < yObstacle2 + heightObstacle2
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+
+    push();
+    fill(0);
+    rect(xWall3, yWall3, widthWall3, heightWall3);
+    pop();
+    //colliding with 3rd wall
+    if (
+      xMainCharacter > xWall3 - widthWall3 + 350 &&
+      xMainCharacter < xWall3 + widthWall3 &&
+      yMainCharacter > yWall3 - heightWall3 + 70 &&
+      yMainCharacter < yWall3 + heightWall3 + 30
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    push();
+    fill(255, 0, 0);
+    rect(xObstacle1, yObstacle1, widthObstacle1, heightObstacle1);
+    pop();
+    if (
+      xMainCharacter > xObstacle1 &&
+      xMainCharacter < xObstacle1 + widthObstacle1 &&
+      yMainCharacter > yObstacle1 - heightObstacle1 + 70 &&
+      yMainCharacter < yObstacle1 + heightObstacle1
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    push();
+    fill(0);
+    rect(xObstacle3, yObstacle3, widthObstacle3, heightObstacle3);
+    pop();
+    if (
+      xMainCharacter > xObstacle3 &&
+      xMainCharacter < xObstacle3 + widthObstacle3 &&
+      yMainCharacter > yObstacle3 - heightObstacle3 &&
+      yMainCharacter < yObstacle3 + heightObstacle3
+    ) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    if (
+      xWeapon > 699 &&
+      yWeapon < 11 &&
+      xMainCharacter > 500 &&
+      yMainCharacter > 200 &&
+      yMainCharacter < 300
+    ) {
+      xMainCharacter = 450;
+      yMainCharacter = 250;
+    }
+    if (xMainCharacter > 690 && yMainCharacter < 100) {
+      xWeapon = 700;
+      yWeapon = 700;
+    }
+    if (xMainCharacter > xEvilGhost && yMainCharacter > yEvilGhost) {
+      battle();
+    }
+    image(mazeBg, 0, 0, 800, 800);
+    push();
+
+    // Calculate the position of the eyes based on xMainCharacter and yMainCharacter
+    let xEyes = map(xMainCharacter, 0, width, 210, 300);
+    let yEyes = map(yMainCharacter, 0, height, 150, 250);
+    xEyes = constrain(xEyes, 210, 270);
+    yEyes = constrain(yEyes, 130, 180);
+
+    // Draw the red irises with the updated position
+    fill(255, 0, 0);
+    ellipse(xEyes - 10, yEyes, 10, 10);
+    ellipse(xEyes + 10, yEyes, 10, 10);
+
+    pop();
+  }
+  if (state === "shooterGameScreenState") {
+    background(bg1);
+    shooterGameScreen();
+  }
   if (state === "youLost") {
     youLost();
     button6.show();
   }
+  if (state === "exitFromTheForest") {
+    ghostScreen();
+    dialogWithGrannyRect();
+    dialogWithGhostAfterForest();
+    button11.show();
+  }
+  if (state === "finalScreenState") {
+    background(screenWithMom);
+    button11.hide();
+    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    if ((mainCharacterAniMovement = true)) {
+      if (kb.holding("right")) {
+        xMainCharacter += 2;
+      }
+      if (kb.holding("left")) {
+        xMainCharacter -= 2;
+      }
+      if (kb.holding("up")) {
+        yMainCharacter -= 2;
+      }
+      if (kb.holding("down")) {
+        yMainCharacter += 2;
+      }
+    }
+    if (xMainCharacter < 50) {
+      xMainCharacter += 2;
+    }
+    if (xMainCharacter > 750) {
+      xMainCharacter -= 2;
+    }
+    if (yMainCharacter < 0) {
+      yMainCharacter += 2;
+    }
+    if (yMainCharacter > 750) {
+      yMainCharacter -= 2;
+    }
+  }
 }
+
 function cloudText() {
   image(cloud, 420, 120, 400, 400);
+  fill(255);
+  textSize(17);
+  textFont("VT323");
+  text("Jane, come here!", 515, 230, 400, 400);
 }
 function collectedItems() {
   push();
   fill(0);
+  stroke(255);
+  strokeWeight(4);
   rect(600, 700, 200, 100);
   pop();
   image(cookie, 600, 660, 150, 200);
+  push();
+  textSize(20);
+  fill(255);
+  textFont("VT323");
+  text("Collected items", 640, 720, 200, 200);
+  pop();
+}
+// black rectangle when you ar etalking with granny
+function dialogWithGrannyRect() {
+  fill(0);
+  rect(0, 600, 800, 600);
+}
+function dialogWithGranny() {
+  let dialogWithGrannyText1 = "Hi Jane! I have special mission for you!";
+  let numChars = min(dialogWithGrannyText1.length, floor(frameCount / 10));
+  fill(255);
+  textFont("VT323");
+  textSize(30);
+  text(dialogWithGrannyText1.substring(0, numChars), 100, 700);
 }
 
 function dialogWithGranny2() {
@@ -598,7 +906,7 @@ function dialogWithGranny2() {
     "Here, I baked some cookies for your mom, could you carry it over to her?";
   let numChars2 = min(dialogWithGrannyText2.length, floor(frameCount / 10));
   fill(255);
-  textSize(30);
+  textSize();
   text(dialogWithGrannyText2.substring(0, numChars2), 50, 700);
 }
 function angryGranny() {
@@ -607,7 +915,7 @@ function angryGranny() {
     "You ungrateful kiddo, take those cookies to your mother RIGHT NOW!!!";
   let numChars3 = min(dialogWithAngryGrannyText.length, floor(frameCount / 10));
   fill(255);
-  textSize(30);
+  textSize(25);
   text(dialogWithAngryGrannyText.substring(0, numChars3), 50, 700);
 }
 function happyGranny() {
@@ -615,13 +923,16 @@ function happyGranny() {
   let dialogWithHappyGrannyText = "Thank you honey :)! Here you have cookies!";
   let numChars4 = min(dialogWithHappyGrannyText.length, floor(frameCount / 10));
   fill(255);
-  textSize(30);
-  text(dialogWithHappyGrannyText.substring(0, numChars4), 50, 700);
+  textSize(25);
+  text(dialogWithHappyGrannyText.substring(0, numChars4), 100, 700);
 }
 function theEndOfTheDialogWithGranny() {
   state = "afterDialogWithGrannyState";
   yMainCharacter = 500;
   xMainCharacter = 500;
+}
+function forestWithHouse() {
+  image(forest, 0, 0, 800, 800);
 }
 function ghostScreen() {
   push();
@@ -640,7 +951,7 @@ function dialogWithGhost() {
   fill(255);
   textSize(30);
   textFont("VT323");
-  text(dialogWithGhost1.substring(0, numCharsGhost1), 50, 700);
+  text(dialogWithGhost1.substring(0, numCharsGhost1), 100, 700);
 }
 
 function dialogWithGhost2() {
@@ -691,19 +1002,32 @@ function dialogWithGhostText4() {
 }
 
 function continueGame() {
-  state = "maze";
+  state = "mazeAfterGhost";
+}
+function battle() {
+  state = "shooterGameScreenState";
 }
 
 function youLost() {
   background(0);
   fill(255, 255, 255);
-  text("You lost!", 300, 300, 300, 300);
+  textSize(70);
+  textFont("VT323");
+  text("You lost!", 270, 100, 300, 300);
 }
 function playAgain() {
-  state = "shooterGameScreenState";
-  bullets = [];
-  enemies = [];
-  score = 0;
+  state = "newGame";
+}
+
+function dialogWithGhostAfterForest() {
+  let dialogWithGhostAfterForest = "Thank you";
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text(dialogWithGhostAfterForest, 100, 650, 800, 700);
+}
+function finalScreen() {
+  state = "finalScreenState";
 }
 
 // function music() {
