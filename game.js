@@ -403,7 +403,7 @@ function shooterGameScreen() {
   }
 }
 
-let state = "room";
+let state = "newGame";
 
 function draw() {
   if (state === "room") {
@@ -452,6 +452,7 @@ function draw() {
     //   yMainCharacter -= 2;
     // }
 
+    // popping out of the cloud background for grandma's text
     if (xMainCharacter > 100 && yMainCharacter > 200) {
       cloudText();
     }
@@ -459,6 +460,7 @@ function draw() {
       state = "dialogWithGrannyState";
     }
   }
+  //play again after failing
   if (state === "newGame") {
     background(bg1);
     // music();
@@ -695,6 +697,7 @@ function draw() {
   if (state === "maze") {
     image(grayBg, 0, 0, 800, 800);
 
+    // trembling position of Tamashi
     image(miniGhost, xMiniGhost, yMiniGhost, 150, 150);
     xMiniGhost += random(-1, 1);
     yMiniGhost += random(-1, 1);
