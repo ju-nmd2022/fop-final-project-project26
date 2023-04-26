@@ -19,17 +19,27 @@ let xEvilGhost = 610;
 let yEvilGhost = 470;
 let shootingCharacter;
 let weapon;
+let handWithGun;
 let xWeapon = 700;
 let yWeapon = 10;
 let ghostEnemy;
 let mazeBg;
+let grayBg;
 let screenWithMom;
+let catAni;
+let angryCat;
+let loveCat;
+let water;
+let fishImg;
+let alpha = 0;
 
 // let mySound;
 
 let bullets = [];
 let enemies = [];
 let score = 0;
+let fishes = [];
+let fishScore = 0;
 
 let button1;
 let button2;
@@ -47,6 +57,9 @@ let button9;
 let button10;
 
 let button11;
+
+// button for talking with cat
+let button12;
 
 let xWall1 = 200;
 let yWall1 = 0;
@@ -83,6 +96,7 @@ let mainCharacterAniMovement = true;
 function preload() {
   bg1 = loadImage("locations/room.png");
   mazeBg = loadImage("locations/maze.png");
+  grayBg = loadImage("otherImages/grayBg.png");
   screenWithMom = loadImage("locations/screenWithMom.png");
 
   // mySound = loadSound("musiccc/backgroundMusic.mp3");
@@ -99,6 +113,8 @@ function preload() {
   evilGhost = loadImage("ghost/evilGhost.png");
 
   weapon = loadImage("otherImages/weapon.png");
+
+  handWithGun = loadImage("otherImages/handWithGun.png");
 
   // main character animation
   mainCharacterAni = loadAnimation(
@@ -118,10 +134,17 @@ function preload() {
   );
   angryGrannyAni.frameDelay = 10;
 
+  catAni = loadImage("otherImages/cat.png");
+
+  angryCat = loadImage("otherImages/angryCat.png");
+  loveCat = loadImage("otherImages/loveCat.png");
+
   ghostAni = loadAnimation("ghost/ghost.png");
 
-  ghostEnemy = loadAnimation("ghost/evilGhost.png", "ghost/miniGhost.png");
-  ghostEnemy.frameDelay = 20;
+  ghostEnemy = loadImage("ghost/ghostEnemy.png");
+
+  water = loadImage("otherImages/water.png");
+  fishImg = loadImage("otherImages/fishImg.png");
 }
 
 function setup() {
@@ -136,6 +159,13 @@ function setup() {
       y: random(height - 1200, height - 900),
     };
     enemies.push(enemy);
+  }
+  for (let i = 0; i < 20; i++) {
+    let fish = {
+      x: random(100, 700),
+      y: random(100, 500),
+    };
+    fishes.push(fish);
   }
 
   // button1, I added classes to button, it's better to stylize them in css
@@ -212,22 +242,126 @@ function setup() {
   button11.mousePressed(finalScreen);
   button11.position(750, 830);
   button11.hide();
-  button11.addClass("button10");
+  button11.addClass("button11");
+
+  button12 = createButton("Sorry, I don't have any fish and I'm really busy.");
+  button12.mousePressed(dialogWithCatState2);
+  button12.position(750, 830);
+  button12.hide();
+  button12.addClass("button12");
+
+  button13 = createButton("Sorry, but...");
+  button13.mousePressed(dialogWithCatState3);
+  button13.position(750, 830);
+  button13.hide();
+  button13.addClass("button13");
+
+  button14 = createButton("Okay, no problem :)");
+  button14.mousePressed(fishingMiniGameState);
+  button14.position(850, 830);
+  button14.hide();
+  button14.addClass("button13");
+
+  button15 = createButton("Ahhh... Okay");
+  button15.mousePressed(fishingMiniGameState);
+  button15.position(850, 830);
+  button15.hide();
+  button15.addClass("button13");
+
+  button16 = createButton("Take a fish from cat");
+  button16.mousePressed(forestWithHouseAfterDialogWithCat);
+  button16.position(850, 830);
+  button16.hide();
+  button16.addClass("button16");
+}
+function fishingMiniGameState() {
+  state = "fishingMiniGameState";
+}
+function fishingMiniGame() {
+  image(water, 0, 0, 800, 800);
+  let rodX1 = 400;
+  let rodY1 = 700;
+  let rodX2 = mouseX;
+  let rodY2 = mouseY;
+  push();
+  fill(0, 0, 0);
+  line(rodX1, rodY1, rodX2, rodY2);
+  ellipse(rodX1, rodY1, 7, 7);
+  ellipse(rodX2, rodY2, 7, 7);
+  pop();
+  for (let fish of fishes) {
+    image(fishImg, fish.x, fish.y, 100, 100);
+    fish.x += random(-2, 2);
+    fish.y += random(-2, 2);
+    if (dist(fish.x, fish.y, mouseX, mouseY) < 10) {
+      fishes.splice(fishes.indexOf(fish), 1);
+      fishScore += 1;
+    }
+    if (fishScore > 19) {
+      state = "loveCatState";
+    }
+  }
+  push();
+  fill(0);
+  textFont("VT323");
+  textSize(30);
+  text("Caught fish: " + fishScore, 100, 700, 400, 400);
+  pop();
+}
+
+function dialogWithCat() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("Hi, do you have some fish?", 300, 650, 1000, 100);
+}
+function dialogWithCatState2() {
+  state = "dialogWithCatState2";
+}
+function dialogWithCat2Text() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("Oh really!? So catch them for me!", 200, 650, 1000, 100);
+}
+function dialogWithCatState3() {
+  state = "dialogWithCatState3";
+}
+function dialogWithCat3Text() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("qwertyuiop", 200, 650, 1000, 100);
+}
+function dialogWithLoveCatText() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("thank you", 200, 650, 1000, 100);
+}
+
+function forestWithHouseAfterDialogWithCat() {
+  state = "forestWithHouseAfterDialogWithCat";
 }
 
 // basics of shooter game screen
 function shooterGameScreen() {
   background(0);
 
-  animation(mainCharacterAni, mouseX, height - 100);
   for (let bullet of bullets) {
-    ellipse(bullet.x, bullet.y, 10);
+    push();
+    fill(255, 0, 0);
+    ellipse(mouseX, bullet.y, 10);
+    pop();
     bullet.y = bullet.y - 5;
   }
+  image(handWithGun, mouseX - 200, 600, 350, 200);
   for (let enemy of enemies) {
-    animation(ghostEnemy, enemy.x, enemy.y);
+    image(ghostEnemy, enemy.x, enemy.y, 100, 100);
     enemy.y = enemy.y + 2;
+    enemy.x += random(-2, 2);
   }
+
   for (let enemy of enemies) {
     for (let bullet of bullets) {
       if (
@@ -274,6 +408,7 @@ let state = "room";
 function draw() {
   if (state === "room") {
     background(bg1);
+
     // music();
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
@@ -333,7 +468,7 @@ function draw() {
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     push();
 
-    image(grannyWatchingTvAni, 500, 300, 300, 300);
+    image(grannyWatchingTv, 500, 300, 300, 300);
     pop();
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
@@ -426,7 +561,7 @@ function draw() {
 
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
-    image(grannyWatchingTvAni, 500, 300, 300, 300);
+    image(grannyWatchingTv, 500, 300, 300, 300);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
         xMainCharacter += 2;
@@ -459,6 +594,17 @@ function draw() {
   }
   if (state === "forestWithHouseState") {
     forestWithHouse();
+
+    pop();
+    noStroke();
+    fill(155, 0, 0, Math.abs(Math.sin(alpha) * 255));
+    ellipse(332, 330, 7, 7);
+    alpha = alpha + 0.3;
+    fill(155, 0, 0, Math.abs(Math.sin(alpha) * 255));
+    ellipse(345, 330, 7, 7);
+    alpha = alpha + 0.3;
+    pop();
+
     collectedItems();
     // xMainCharacter = 400;
     // yMainCharacter = 400;
@@ -477,27 +623,84 @@ function draw() {
         yMainCharacter += 2;
       }
     }
-    if (xMainCharacter < 50) {
+    if (xMainCharacter > 350 && yMainCharacter < 400) {
+      state = "dialogWithCatState";
+    }
+  }
+  if (state === "dialogWithCatState") {
+    background(0);
+
+    image(catAni, 0, 0, 800, 800);
+    dialogWithGrannyRect();
+    dialogWithCat();
+    button12.show();
+  }
+  if (state === "dialogWithCatState2") {
+    background(0);
+
+    image(catAni, 0, 0, 800, 800);
+    dialogWithGrannyRect();
+    dialogWithCat2Text();
+    button12.hide();
+    button13.show();
+    button14.show();
+  }
+  if (state === "dialogWithCatState3") {
+    image(angryCat, 0, 0, 800, 800);
+    dialogWithGrannyRect();
+    dialogWithCat3Text();
+    button13.hide();
+    button14.hide();
+    button15.show();
+  }
+  if (state === "fishingMiniGameState") {
+    fishingMiniGame();
+    button13.hide();
+    button14.hide();
+    button15.hide();
+  }
+  if (state === "loveCatState") {
+    image(loveCat, 0, 0, 800, 800);
+    dialogWithGrannyRect();
+    dialogWithLoveCatText();
+    button16.show();
+  }
+  if (state === "forestWithHouseAfterDialogWithCat") {
+    forestWithHouse();
+
+    collectedItems();
+    image(fishImg, 700, 740, 50, 50);
+    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    if ((mainCharacterAniMovement = true)) {
+      if (kb.holding("right")) {
+        xMainCharacter += 2;
+      }
+      if (kb.holding("left")) {
+        xMainCharacter -= 2;
+      }
+      if (kb.holding("up")) {
+        yMainCharacter -= 2;
+      }
+      if (kb.holding("down")) {
+        yMainCharacter += 2;
+      }
+    }
+    if (xMainCharacter < 600) {
       xMainCharacter += 2;
     }
-    if (xMainCharacter > 750) {
-      xMainCharacter -= 2;
-    }
-    if (yMainCharacter < 0) {
-      yMainCharacter += 2;
-    }
-    if (yMainCharacter > 750) {
-      yMainCharacter -= 2;
+    if (xMainCharacter > 750 && yMainCharacter < 150) {
+      state = "maze";
     }
   }
   if (state === "maze") {
-    background(0);
+    image(grayBg, 0, 0, 800, 800);
 
     image(miniGhost, xMiniGhost, yMiniGhost, 150, 150);
-    xMiniGhost += random(-2, 2);
-    yMiniGhost += random(-2, 2);
+    xMiniGhost += random(-1, 1);
+    yMiniGhost += random(-1, 1);
     collectedItems();
-    image(weapon, 700, 10, 100, 100);
+    image(fishImg, 700, 740, 50, 50);
+    image(weapon, 650, 20, 100, 50);
 
     // wall1.draw();
 
@@ -530,7 +733,8 @@ function draw() {
     }
 
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xWall1, yWall1, widthWall1, heightWall1);
     pop();
 
@@ -546,7 +750,8 @@ function draw() {
     }
 
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xWall2, yWall2, widthWall2, heightWall2);
     pop();
 
@@ -560,7 +765,8 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xObstacle2, yObstacle2, widthObstacle2, heightObstacle2);
     pop();
     if (
@@ -574,7 +780,8 @@ function draw() {
     }
 
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xWall3, yWall3, widthWall3, heightWall3);
     pop();
     //colliding with 3rd wall
@@ -588,7 +795,8 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xObstacle1, yObstacle1, widthObstacle1, heightObstacle1);
     pop();
     if (
@@ -601,7 +809,8 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xObstacle3, yObstacle3, widthObstacle3, heightObstacle3);
     pop();
     if (
@@ -616,6 +825,7 @@ function draw() {
     if (yMainCharacter > 500 && xMainCharacter > 0) {
       state = "ghostState";
     }
+
     image(mazeBg, 0, 0, 800, 800);
     push();
 
@@ -662,16 +872,15 @@ function draw() {
     button10.show();
   }
   if (state === "mazeAfterGhost") {
-    background(0);
+    image(grayBg, 0, 0, 800, 800);
     button10.hide();
-    // wall1.draw();
-    collectedItems();
-    image(weapon, xWeapon, yWeapon, 100, 100);
-    image(evilGhost, xEvilGhost, yEvilGhost, 200, 200);
-    xEvilGhost += random(-2, 2);
-    yEvilGhost += random(-2, 2);
 
-    // if(xWeapon > 699 && yWeapon < 11 && )
+    collectedItems();
+    image(fishImg, 700, 740, 50, 50);
+    image(weapon, xWeapon, yWeapon, 100, 50);
+    image(evilGhost, xEvilGhost, yEvilGhost, 200, 200);
+    xEvilGhost += random(-1, 1);
+    yEvilGhost += random(-1, 1);
 
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
@@ -700,8 +909,13 @@ function draw() {
     if (yMainCharacter > 750) {
       yMainCharacter -= 2;
     }
+    if (xMainCharacter > 500) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xWall1, yWall1, widthWall1, heightWall1);
     pop();
 
@@ -717,7 +931,8 @@ function draw() {
     }
 
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xWall2, yWall2, widthWall2, heightWall2);
     pop();
 
@@ -731,7 +946,8 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xObstacle2, yObstacle2, widthObstacle2, heightObstacle2);
     pop();
     if (
@@ -745,7 +961,8 @@ function draw() {
     }
 
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xWall3, yWall3, widthWall3, heightWall3);
     pop();
     //colliding with 3rd wall
@@ -759,7 +976,8 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(255, 0, 0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xObstacle1, yObstacle1, widthObstacle1, heightObstacle1);
     pop();
     if (
@@ -772,7 +990,8 @@ function draw() {
       yMainCharacter = 100;
     }
     push();
-    fill(0);
+    noStroke();
+    fill(0, 0, 0, 0);
     rect(xObstacle3, yObstacle3, widthObstacle3, heightObstacle3);
     pop();
     if (
@@ -878,7 +1097,7 @@ function collectedItems() {
   strokeWeight(4);
   rect(600, 700, 200, 100);
   pop();
-  image(cookie, 600, 660, 150, 200);
+  image(cookie, 600, 690, 100, 150);
   push();
   textSize(20);
   fill(255);
