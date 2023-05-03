@@ -1,5 +1,8 @@
+// canva
 let c;
+// backgroun for room
 let bg1;
+// main character
 let mainCharacterAni;
 let grannyWatchingTv;
 let grannyAni;
@@ -32,34 +35,15 @@ let loveCat;
 let water;
 let fishImg;
 let alpha = 0;
-
-// let mySound;
+let momAni;
+let momImg;
+let heart;
 
 let bullets = [];
 let enemies = [];
 let score = 0;
 let fishes = [];
 let fishScore = 0;
-
-let button1;
-let button2;
-let button3;
-let button4;
-let button5;
-let button6;
-//button for talking with ghost
-let button7;
-//button for 2nd answer to ghost
-let button8;
-// button for 3th answer to ghost
-let button9;
-//button for continuing the game after the dialogue with Tamashi
-let button10;
-
-let button11;
-
-// button for talking with cat
-let button12;
 
 let xWall1 = 200;
 let yWall1 = 0;
@@ -94,12 +78,14 @@ let heightObstacle3 = 100;
 let mainCharacterAniMovement = true;
 
 function preload() {
+  // room
   bg1 = loadImage("locations/room.png");
+  // maze
   mazeBg = loadImage("locations/maze.png");
+  // grey background in the maze
   grayBg = loadImage("otherImages/grayBg.png");
+  // exit from the forest with mom
   screenWithMom = loadImage("locations/screenWithMom.png");
-
-  // mySound = loadSound("musiccc/backgroundMusic.mp3");
 
   cloud = loadImage("otherImages/cloud.png");
   cookie = loadImage("otherImages/cookie.png");
@@ -115,6 +101,7 @@ function preload() {
   weapon = loadImage("otherImages/weapon.png");
 
   handWithGun = loadImage("otherImages/handWithGun.png");
+  heart = loadImage("otherImages/heart.png");
 
   // main character animation
   mainCharacterAni = loadAnimation(
@@ -133,26 +120,34 @@ function preload() {
     "angrygranny/angrygranny2.png"
   );
   angryGrannyAni.frameDelay = 10;
-
+  // image of cat during dialog with cat
   catAni = loadImage("otherImages/cat.png");
-
+  // image of angry cat during dialog with cat
   angryCat = loadImage("otherImages/angryCat.png");
+  // image of cat with hearts after fishing mini game
   loveCat = loadImage("otherImages/loveCat.png");
 
   ghostAni = loadAnimation("ghost/ghost.png");
-
+  // small ghosts in the ghost mini game
   ghostEnemy = loadImage("ghost/ghostEnemy.png");
-
+  // bg image for fishing mini game
   water = loadImage("otherImages/water.png");
+  // small fish in mini game
   fishImg = loadImage("otherImages/fishImg.png");
+
+  momAni = loadAnimation("mommy/mommy.png");
+  momAni.frameDelay = 10;
+
+  momImg = loadImage("mommy/momSprite.png");
 }
 
 function setup() {
   noSmooth();
   c = createCanvas(800, 800);
-
+  // images don't loose quality
   noSmooth();
-
+  // loop for ghosts in mini game ghost
+  // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let i = 0; i < 30; i++) {
     let enemy = {
       x: random(100, 700),
@@ -160,6 +155,7 @@ function setup() {
     };
     enemies.push(enemy);
   }
+  // loop for fish in mini game fish
   for (let i = 0; i < 20; i++) {
     let fish = {
       x: random(100, 700),
@@ -169,6 +165,7 @@ function setup() {
   }
 
   // button1, I added classes to button, it's better to stylize them in css
+  // Jane aswers granny first time
   button1 = createButton("Sure!");
   button1.mousePressed(dialogWithGranny2);
   button1.position(550, 830);
@@ -176,6 +173,7 @@ function setup() {
   button1.hide();
 
   //button2
+  // Jane want to have bring cookies to mom
   button2 = createButton("Ok, no problem!");
   button2.mousePressed(happyGranny);
   button2.position(550, 830);
@@ -183,6 +181,7 @@ function setup() {
   button2.addClass("button2");
 
   // button3
+  // Jane refuses grandma
   button3 = createButton("Ehhh, I'm too busy grandma :/");
   button3.mousePressed(angryGranny);
   button3.position(1000, 830);
@@ -190,6 +189,7 @@ function setup() {
   button3.addClass("button3");
 
   // button4
+  // Jane will take cookies beacuse grandma is angry
   button4 = createButton("Okay, okay...");
   button4.mousePressed(happyGranny);
   button4.position(750, 830);
@@ -197,13 +197,15 @@ function setup() {
   button4.addClass("button4");
 
   // button5
-  button5 = createButton("Thanks grandma! Have a nice day :)!");
+  // Jane "say goodbye" to grandma
+  button5 = createButton("Take cookies from grandma");
   button5.mousePressed(theEndOfTheDialogWithGranny);
   button5.position(750, 830);
   button5.hide();
   button5.addClass("button5");
 
   // button6
+  // Play again after failed battle with ghost enemies
   button6 = createButton("Play again");
   button6.mousePressed(playAgain);
   button6.size(170, 80);
@@ -212,6 +214,7 @@ function setup() {
   button6.addClass("button6");
 
   //button7
+  // Jane is starting dialog with Tamashi
   button7 = createButton("Oh shoot! Who are you?!");
   button7.mousePressed(dialogWithGhost2);
   button7.position(750, 830);
@@ -219,6 +222,7 @@ function setup() {
   button7.addClass("button7");
 
   //button8
+  // Jane is continuing dialog with Tamashi
   button8 = createButton("What happened?");
   button8.mousePressed(dialogWithGhost3);
   button8.position(750, 830);
@@ -226,128 +230,75 @@ function setup() {
   button8.addClass("button8");
 
   //button9
+  // Jane is continuing dialog with Tamashi
   button9 = createButton("What?! How?");
   button9.mousePressed(dialogWithGhost4);
   button9.position(750, 830);
   button9.hide();
   button9.addClass("button9");
+
   //button10
+  // Jane is continuing dialog with Tamashi
   button10 = createButton("Continue...");
   button10.mousePressed(continueGame);
   button10.position(750, 830);
   button10.hide();
   button10.addClass("button10");
   // button11
+  // Jane has dialog with Tamashi after winning the mini game ghost
   button11 = createButton("Oh, thank you");
   button11.mousePressed(finalScreen);
   button11.position(750, 830);
   button11.hide();
   button11.addClass("button11");
-
+  // button12
+  // Jane starts dialog with cat
   button12 = createButton("Sorry, I don't have any fish and I'm really busy.");
   button12.mousePressed(dialogWithCatState2);
-  button12.position(750, 830);
+  button12.position(720, 830);
   button12.hide();
   button12.addClass("button12");
-
-  button13 = createButton("Sorry, but...");
+  // button13
+  // Jane refuses to cat
+  button13 = createButton("Sorry, I'm in a hurry");
   button13.mousePressed(dialogWithCatState3);
-  button13.position(750, 830);
+  button13.position(550, 830);
   button13.hide();
   button13.addClass("button13");
-
+  // button14
+  // Jane accepts the cat's regueast, start of fishing mini game
   button14 = createButton("Okay, no problem :)");
   button14.mousePressed(fishingMiniGameState);
-  button14.position(850, 830);
+  button14.position(900, 830);
   button14.hide();
-  button14.addClass("button13");
-
+  button14.addClass("button14");
+  // button15
+  // Jane accepts the cat's regueast, start of fishing mini game
   button15 = createButton("Ahhh... Okay");
   button15.mousePressed(fishingMiniGameState);
-  button15.position(850, 830);
+  button15.position(750, 830);
   button15.hide();
-  button15.addClass("button13");
-
+  button15.addClass("button15");
+  // button16
+  // short dialog with cat after fishing mini game, Jane takes fish from cat
   button16 = createButton("Take a fish from cat");
   button16.mousePressed(forestWithHouseAfterDialogWithCat);
-  button16.position(850, 830);
+  button16.position(780, 830);
   button16.hide();
   button16.addClass("button16");
-}
-function fishingMiniGameState() {
-  state = "fishingMiniGameState";
-}
-function fishingMiniGame() {
-  image(water, 0, 0, 800, 800);
-  let rodX1 = 400;
-  let rodY1 = 700;
-  let rodX2 = mouseX;
-  let rodY2 = mouseY;
-  push();
-  fill(0, 0, 0);
-  line(rodX1, rodY1, rodX2, rodY2);
-  ellipse(rodX1, rodY1, 7, 7);
-  ellipse(rodX2, rodY2, 7, 7);
-  pop();
-  for (let fish of fishes) {
-    image(fishImg, fish.x, fish.y, 100, 100);
-    fish.x += random(-2, 2);
-    fish.y += random(-2, 2);
-    if (dist(fish.x, fish.y, mouseX, mouseY) < 10) {
-      fishes.splice(fishes.indexOf(fish), 1);
-      fishScore += 1;
-    }
-    if (fishScore > 19) {
-      state = "loveCatState";
-    }
-  }
-  push();
-  fill(0);
-  textFont("VT323");
-  textSize(30);
-  text("Caught fish: " + fishScore, 100, 700, 400, 400);
-  pop();
-}
-
-function dialogWithCat() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text("Hi, do you have some fish?", 300, 650, 1000, 100);
-}
-function dialogWithCatState2() {
-  state = "dialogWithCatState2";
-}
-function dialogWithCat2Text() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text("Oh really!? So catch them for me!", 200, 650, 1000, 100);
-}
-function dialogWithCatState3() {
-  state = "dialogWithCatState3";
-}
-function dialogWithCat3Text() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text("qwertyuiop", 200, 650, 1000, 100);
-}
-function dialogWithLoveCatText() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text("thank you", 200, 650, 1000, 100);
-}
-
-function forestWithHouseAfterDialogWithCat() {
-  state = "forestWithHouseAfterDialogWithCat";
+  // button17
+  // Jane answers mom, end of the game
+  button17 = createButton("Ahhh... It's a long story...");
+  button17.position(790, 800);
+  button17.hide();
+  button17.addClass("button17");
 }
 
 // basics of shooter game screen
 function shooterGameScreen() {
   background(0);
-
+  // loop for bullets in mini game ghost
+  // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let bullet of bullets) {
     push();
     fill(255, 0, 0);
@@ -356,44 +307,43 @@ function shooterGameScreen() {
     bullet.y = bullet.y - 5;
   }
   image(handWithGun, mouseX - 200, 600, 350, 200);
+  // loop for ghosts in mini game ghost
+  // the next followed 5 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let enemy of enemies) {
-    image(ghostEnemy, enemy.x, enemy.y, 100, 100);
+    image(ghostEnemy, enemy.x + 50, enemy.y + 50, 100, 100);
     enemy.y = enemy.y + 2;
     enemy.x += random(-2, 2);
   }
-
+  // when bullet hit a ghost, ghost disappears
+  // the next followed 14 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let enemy of enemies) {
     for (let bullet of bullets) {
-      if (
-        dist(
-          enemy.x,
-
-          enemy.y,
-
-          bullet.x,
-          bullet.y
-        ) < 10
-      ) {
+      if (dist(enemy.x, enemy.y, bullet.x, bullet.y) < 10) {
         enemies.splice(enemies.indexOf(enemy), 1);
         score += 1;
       }
       if (dist(enemy.x, enemy.y, mouseX, height - 100) < 10) {
         state = "youLost";
       }
+      // if enemy touches the bottom of the screen you lose
       if (enemy.y > 800) {
         state = "youLost";
       }
+      // if you hit more than 29 ghosts you won
       if (score > 29) {
         state = "exitFromTheForest";
       }
     }
   }
+  // counter of killed ghosts
   push();
   fill(255, 255, 255);
   textFont("VT323");
   textSize(30);
   text("Killed ghost: " + score, 100, 600, 400, 400);
   pop();
+  // if you click, you shoot bullets at ghosts
+  // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   if (mouseIsPressed === true) {
     let bullet = {
       x: mouseX,
@@ -403,19 +353,17 @@ function shooterGameScreen() {
   }
 }
 
-let state = "newGame";
+let state = "dialogWithGrannyState";
 
 function draw() {
   if (state === "room") {
     background(bg1);
-
-    // music();
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     push();
-
     image(grannyWatchingTv, 480, 280, 300, 300);
     pop();
+    // if you hold specific key, character character moves in specific direction
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
         xMainCharacter += 2;
@@ -430,10 +378,11 @@ function draw() {
         yMainCharacter += 2;
       }
     }
+    // character cannot go beyond the canva, when character is close to the wall, direction of movement is opposite
     if (xMainCharacter < 50) {
       xMainCharacter += 1;
     }
-    if (xMainCharacter > 750) {
+    if (xMainCharacter > 500) {
       xMainCharacter -= 1;
     }
     if (yMainCharacter < 0) {
@@ -442,15 +391,16 @@ function draw() {
     if (yMainCharacter > 750) {
       yMainCharacter -= 1;
     }
-    // if (
-    //   xMainCharacter < 100 &&
-    //   xMainCharacter > 350 &&
-    //   yMainCharacter > 200 &&
-    //   yMainCharacter < 500
-    // ) {
-    //   xMainCharacter += 2;
-    //   yMainCharacter -= 2;
-    // }
+    // if character is near table it comes back to the specific position, character cannot stand on the furnitures
+    if (
+      xMainCharacter < 400 &&
+      xMainCharacter > 100 &&
+      yMainCharacter < 500 &&
+      yMainCharacter > 200
+    ) {
+      xMainCharacter = 200;
+      yMainCharacter = 150;
+    }
 
     // popping out of the cloud background for grandma's text
     if (xMainCharacter > 100 && yMainCharacter > 200) {
@@ -502,6 +452,7 @@ function draw() {
     if (xMainCharacter > 100 && xMainCharacter < 600 && yMainCharacter > 200) {
       cloudText();
     }
+    // if character is close to the grandma, state is changing and dialog with grandma starts
     if (xMainCharacter > 500 && yMainCharacter > 300) {
       state = "dialogWithGrannyState";
     }
@@ -608,8 +559,7 @@ function draw() {
     pop();
 
     collectedItems();
-    // xMainCharacter = 400;
-    // yMainCharacter = 400;
+
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
@@ -624,6 +574,22 @@ function draw() {
       if (kb.holding("down")) {
         yMainCharacter += 2;
       }
+    }
+    if (xMainCharacter < 100) {
+      xMainCharacter += 2;
+    }
+    if (xMainCharacter > 200 && xMainCharacter < 300 && yMainCharacter < 600) {
+      yMainCharacter += 10;
+    }
+    if (xMainCharacter > 370 && xMainCharacter < 500 && yMainCharacter > 700) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
+    if (xMainCharacter > 400) {
+      xMainCharacter -= 3;
+    }
+    if (yMainCharacter > 600) {
+      yMainCharacter -= 3;
     }
     if (xMainCharacter > 350 && yMainCharacter < 400) {
       state = "dialogWithCatState";
@@ -669,9 +635,11 @@ function draw() {
   }
   if (state === "forestWithHouseAfterDialogWithCat") {
     forestWithHouse();
-
+    button16.hide();
     collectedItems();
     image(fishImg, 700, 740, 50, 50);
+    image(heart, 325, 320, 12, 12);
+    image(heart, 337, 319, 12, 12);
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
@@ -687,8 +655,14 @@ function draw() {
         yMainCharacter += 2;
       }
     }
-    if (xMainCharacter < 600) {
-      xMainCharacter += 2;
+    if (xMainCharacter < 450) {
+      xMainCharacter += 1;
+    }
+    if (yMainCharacter > 300) {
+      yMainCharacter -= 3;
+    }
+    if (xMainCharacter > 500 && yMainCharacter > 200) {
+      xMainCharacter -= 1;
     }
     if (xMainCharacter > 750 && yMainCharacter < 150) {
       state = "maze";
@@ -828,6 +802,10 @@ function draw() {
     if (yMainCharacter > 500 && xMainCharacter > 0) {
       state = "ghostState";
     }
+    if (xMainCharacter > 700) {
+      xMainCharacter = 100;
+      yMainCharacter = 100;
+    }
 
     image(mazeBg, 0, 0, 800, 800);
     push();
@@ -888,16 +866,16 @@ function draw() {
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
-        xMainCharacter += 5;
+        xMainCharacter += 2;
       }
       if (kb.holding("left")) {
-        xMainCharacter -= 5;
+        xMainCharacter -= 2;
       }
       if (kb.holding("up")) {
-        yMainCharacter -= 5;
+        yMainCharacter -= 2;
       }
       if (kb.holding("down")) {
-        yMainCharacter += 5;
+        yMainCharacter += 2;
       }
     }
     if (xMainCharacter < 50) {
@@ -912,10 +890,7 @@ function draw() {
     if (yMainCharacter > 750) {
       yMainCharacter -= 2;
     }
-    if (xMainCharacter > 500) {
-      xMainCharacter = 100;
-      yMainCharacter = 100;
-    }
+
     push();
     noStroke();
     fill(0, 0, 0, 0);
@@ -1057,6 +1032,9 @@ function draw() {
     background(screenWithMom);
     button11.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
+    collectedItems();
+    image(fishImg, 700, 740, 50, 50);
+    image(momImg, 450, 400, 160, 160);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
         xMainCharacter += 2;
@@ -1074,15 +1052,36 @@ function draw() {
     if (xMainCharacter < 50) {
       xMainCharacter += 2;
     }
-    if (xMainCharacter > 750) {
+    if (xMainCharacter > 500) {
       xMainCharacter -= 2;
     }
     if (yMainCharacter < 0) {
       yMainCharacter += 2;
     }
-    if (yMainCharacter > 750) {
+    if (yMainCharacter > 650) {
       yMainCharacter -= 2;
     }
+    if (xMainCharacter < 150 && yMainCharacter < 150) {
+      xMainCharacter = 100;
+      yMainCharacter = 700;
+    }
+    if (xMainCharacter > 0 && xMainCharacter < 400 && yMainCharacter < 600) {
+      yMainCharacter += 1;
+    }
+    if (xMainCharacter > 401 && yMainCharacter < 500) {
+      yMainCharacter += 1;
+    }
+    if (yMainCharacter > 650) {
+      yMainCharacter -= 1;
+    }
+
+    if (xMainCharacter > 350 && yMainCharacter < 550) {
+      state = "momState";
+    }
+  }
+  if (state === "momState") {
+    dialogWithMom();
+    button17.show();
   }
 }
 
@@ -1125,10 +1124,10 @@ function dialogWithGranny() {
 function dialogWithGranny2() {
   state = "dialogWithGranny2State";
   let dialogWithGrannyText2 =
-    "Here, I baked some cookies for your mom, could you carry it over to her?";
+    "Here, I baked some cookies for your mom, could you bring it to her?";
   let numChars2 = min(dialogWithGrannyText2.length, floor(frameCount / 10));
   fill(255);
-  textSize();
+  textSize(25);
   text(dialogWithGrannyText2.substring(0, numChars2), 50, 700);
 }
 function angryGranny() {
@@ -1146,7 +1145,7 @@ function happyGranny() {
   let numChars4 = min(dialogWithHappyGrannyText.length, floor(frameCount / 10));
   fill(255);
   textSize(25);
-  text(dialogWithHappyGrannyText.substring(0, numChars4), 100, 700);
+  text(dialogWithHappyGrannyText.substring(0, numChars4), 150, 700);
 }
 function theEndOfTheDialogWithGranny() {
   state = "afterDialogWithGrannyState";
@@ -1168,12 +1167,12 @@ function ghostScreen() {
 }
 
 function dialogWithGhost() {
-  let dialogWithGhost1 = "Hey? Is there someone here? ";
+  let dialogWithGhost1 = "Hey? Is anyone here? ";
   let numCharsGhost1 = min(dialogWithGhost1.length, floor(frameCount / 10));
   fill(255);
   textSize(30);
   textFont("VT323");
-  text(dialogWithGhost1.substring(0, numCharsGhost1), 100, 700);
+  text(dialogWithGhost1.substring(0, numCharsGhost1), 250, 700);
 }
 
 function dialogWithGhost2() {
@@ -1197,16 +1196,16 @@ function dialogWithGhostText3() {
   "I fought with his army and was defeated. Now my soul is forever stuck in this maze and YOU can help both of us.";
   // let numCharsGhost3 = min(dialogWithGhost3.length, floor(frameCount / 10));
   fill(255);
-  textSize(30);
+  textSize(25);
   textFont("VT323");
   text(
     "I fought with his army and was defeated. Now my soul is ",
-    50,
-    650,
+    130,
+    630,
     1000,
     100
   );
-  text("forever stuck in this maze and YOU can help me!", 50, 700, 1000, 100);
+  text("forever stuck in this maze and YOU can help me!", 150, 680, 1000, 100);
   // text(dialogWithGhost3.substring(0, numCharsGhost3), 50, 700);
 }
 function dialogWithGhost4() {
@@ -1242,7 +1241,8 @@ function playAgain() {
 }
 
 function dialogWithGhostAfterForest() {
-  let dialogWithGhostAfterForest = "Thank you";
+  let dialogWithGhostAfterForest =
+    "Now my soul is free. I have a precious gift for you.";
   fill(255);
   textSize(30);
   textFont("VT323");
@@ -1250,6 +1250,100 @@ function dialogWithGhostAfterForest() {
 }
 function finalScreen() {
   state = "finalScreenState";
+}
+function dialogWithMom() {
+  push();
+  clear();
+  scale(1.3);
+  animation(momAni, 300, 300);
+  pop();
+  dialogWithGrannyRect();
+  fill(255);
+  textFont("VT323");
+  textSize(30);
+  text("Hi, honey! What took you so long to get here? ", 100, 650, 600, 600);
+}
+function fishingMiniGameState() {
+  state = "fishingMiniGameState";
+}
+function fishingMiniGame() {
+  image(water, 0, 0, 800, 800);
+  let rodX1 = 400;
+  let rodY1 = 700;
+  let rodX2 = mouseX;
+  let rodY2 = mouseY;
+  push();
+  fill(0, 0, 0);
+  line(rodX1, rodY1, rodX2, rodY2);
+  ellipse(rodX1, rodY1, 7, 7);
+  ellipse(rodX2, rodY2, 7, 7);
+  pop();
+  for (let fish of fishes) {
+    image(fishImg, fish.x, fish.y, 100, 100);
+    fish.x += random(-2, 2);
+    fish.y += random(-2, 2);
+    if (dist(fish.x + 50, fish.y + 50, mouseX, mouseY) < 10) {
+      fishes.splice(fishes.indexOf(fish), 1);
+      fishScore += 1;
+    }
+    if (fishScore > 19) {
+      state = "loveCatState";
+    }
+  }
+  push();
+  fill(0);
+  textFont("VT323");
+  textSize(30);
+  text("Caught fish: " + fishScore, 100, 700, 400, 400);
+  pop();
+}
+
+function dialogWithCat() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("Hi, do you have some fish?", 250, 650, 1000, 100);
+}
+function dialogWithCatState2() {
+  state = "dialogWithCatState2";
+}
+function dialogWithCat2Text() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("Oh really!? So catch them for me!", 200, 650, 1000, 100);
+}
+function dialogWithCatState3() {
+  state = "dialogWithCatState3";
+}
+function dialogWithCat3Text() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text(
+    "If you don't catch fish for me, I'll bite your ears!",
+    100,
+    650,
+    1000,
+    100
+  );
+}
+function dialogWithLoveCatText() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text(
+    "I love you!!! I'll give the most precious gift in the world,",
+    50,
+    630,
+    1000,
+    100
+  );
+  text("this beautiful, fat fish", 280, 680, 1000, 100);
+}
+
+function forestWithHouseAfterDialogWithCat() {
+  state = "forestWithHouseAfterDialogWithCat";
 }
 
 // function music() {
