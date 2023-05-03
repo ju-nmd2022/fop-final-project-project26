@@ -148,7 +148,7 @@ function setup() {
   noSmooth();
   // loop for ghosts in mini game ghost
   // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 10; i++) {
     let enemy = {
       x: random(100, 700),
       y: random(height - 1200, height - 900),
@@ -302,7 +302,7 @@ function shooterGameScreen() {
   for (let bullet of bullets) {
     push();
     fill(255, 0, 0);
-    ellipse(mouseX, bullet.y, 10);
+    ellipse(bullet.x, bullet.y, 10);
     pop();
     bullet.y = bullet.y - 5;
   }
@@ -311,14 +311,14 @@ function shooterGameScreen() {
   // the next followed 5 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let enemy of enemies) {
     image(ghostEnemy, enemy.x + 50, enemy.y + 50, 100, 100);
-    enemy.y = enemy.y + 2;
-    enemy.x += random(-2, 2);
+    enemy.y = enemy.y + 1;
+    // enemy.x += random(-2, 2);
   }
   // when bullet hit a ghost, ghost disappears
   // the next followed 14 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let enemy of enemies) {
     for (let bullet of bullets) {
-      if (dist(enemy.x, enemy.y, bullet.x, bullet.y) < 10) {
+      if (dist(enemy.x, enemy.y, bullet.x + 5, bullet.y + 5) < 10) {
         enemies.splice(enemies.indexOf(enemy), 1);
         score += 1;
       }
@@ -329,8 +329,8 @@ function shooterGameScreen() {
       if (enemy.y > 800) {
         state = "youLost";
       }
-      // if you hit more than 29 ghosts you won
-      if (score > 29) {
+      // if you hit more than 9 ghosts you won
+      if (score > 9) {
         state = "exitFromTheForest";
       }
     }
@@ -347,13 +347,13 @@ function shooterGameScreen() {
   if (mouseIsPressed === true) {
     let bullet = {
       x: mouseX,
-      y: height - 100,
+      y: height - 200,
     };
     bullets.push(bullet);
   }
 }
 
-let state = "dialogWithGrannyState";
+let state = "shooterGameScreenState";
 
 function draw() {
   if (state === "room") {
@@ -1263,6 +1263,36 @@ function dialogWithMom() {
   textSize(30);
   text("Hi, honey! What took you so long to get here? ", 100, 650, 600, 600);
 }
+function dialogWithCat() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("Hi, do you have some fish?", 250, 650, 1000, 100);
+}
+function dialogWithCatState2() {
+  state = "dialogWithCatState2";
+}
+function dialogWithCat2Text() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text("Oh really!? So catch them for me!", 200, 650, 1000, 100);
+}
+function dialogWithCatState3() {
+  state = "dialogWithCatState3";
+}
+function dialogWithCat3Text() {
+  fill(255);
+  textSize(30);
+  textFont("VT323");
+  text(
+    "If you don't catch fish for me, I'll bite your ears!",
+    100,
+    650,
+    1000,
+    100
+  );
+}
 function fishingMiniGameState() {
   state = "fishingMiniGameState";
 }
@@ -1298,36 +1328,6 @@ function fishingMiniGame() {
   pop();
 }
 
-function dialogWithCat() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text("Hi, do you have some fish?", 250, 650, 1000, 100);
-}
-function dialogWithCatState2() {
-  state = "dialogWithCatState2";
-}
-function dialogWithCat2Text() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text("Oh really!? So catch them for me!", 200, 650, 1000, 100);
-}
-function dialogWithCatState3() {
-  state = "dialogWithCatState3";
-}
-function dialogWithCat3Text() {
-  fill(255);
-  textSize(30);
-  textFont("VT323");
-  text(
-    "If you don't catch fish for me, I'll bite your ears!",
-    100,
-    650,
-    1000,
-    100
-  );
-}
 function dialogWithLoveCatText() {
   fill(255);
   textSize(30);
