@@ -70,7 +70,7 @@ body {
   font-size: 1.2em;
   color: white;
   font-family: "VT323";
-  width: 200px;
+  width: 150px;
   height: 50px;
   background: black;
   border: 0px;
@@ -211,36 +211,20 @@ body {
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
 }
-
-/* .button1:hover {
-  cursor: pointer;
-  background-color: black;
-}
-
-.button1:active {
-  top: 5px;
-  box-shadow: -4px 2px 1px 1px grey, -4px -2px 1px 1px lightgray,
-    4px 0px 1px 1px lightgray;
-}
-
-.button1::after {
-  content: "";
+.button18 {
+  font-size: 1.2em;
+  color: white;
+  font-family: "VT323";
+  transition-duration: 1s;
+  width: 150px;
+  height: 50px;
   background: black;
-  position: absolute;
-  left: -2.5%;
-  top: 0;
-  width: 105%;
-  height: 100%;
-  z-index: -1;
+  border: 0px;
+  position: relative;
+  box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
+    inset 4px 0px 1px 1px lightgray;
 }
 
-.btn::before {
-  content: "";
-  background: black;
-  position: absolute;
-  left: 0;
-  top: -5%;
-  width: 100%;
-  height: 113%;
-  z-index: -1;
-}  */
+/* .button18:hover {
+  background: red;
+} */

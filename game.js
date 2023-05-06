@@ -23,8 +23,10 @@ let yEvilGhost = 470;
 let shootingCharacter;
 let weapon;
 let handWithGun;
-let xWeapon = 700;
+let xWeapon = 650;
 let yWeapon = 10;
+let wWeapon = 100;
+let hWeapon = 50;
 let ghostEnemy;
 let mazeBg;
 let grayBg;
@@ -38,6 +40,15 @@ let alpha = 0;
 let momAni;
 let momImg;
 let heart;
+let starImg;
+let title1;
+let title2;
+let title3;
+let gameOver;
+
+let stars = []; // array to store the stars
+let speed = 0.1; // speed of parallax effect
+let starSize = 10;
 
 let bullets = [];
 let enemies = [];
@@ -139,6 +150,13 @@ function preload() {
   momAni.frameDelay = 10;
 
   momImg = loadImage("mommy/momSprite.png");
+  starImg = loadImage("otherImages/star.png");
+
+  title1 = loadImage("otherImages/title1.png");
+  title2 = loadImage("otherImages/title2.png");
+  title3 = loadImage("otherImages/title3.png");
+
+  gameOver = loadImage("otherImages/gameOver.png");
 }
 
 function setup() {
@@ -162,6 +180,14 @@ function setup() {
       y: random(100, 500),
     };
     fishes.push(fish);
+  }
+
+  for (let i = 0; i < 50; i++) {
+    let star = {
+      x: random(width),
+      y: random(height),
+    };
+    stars.push(star);
   }
 
   // button1, I added classes to button, it's better to stylize them in css
@@ -208,8 +234,7 @@ function setup() {
   // Play again after failed battle with ghost enemies
   button6 = createButton("Play again");
   button6.mousePressed(playAgain);
-  button6.size(170, 80);
-  button6.position(750, 700);
+  button6.position(780, 800);
   button6.hide();
   button6.addClass("button6");
 
@@ -292,11 +317,18 @@ function setup() {
   button17.position(790, 800);
   button17.hide();
   button17.addClass("button17");
+
+  // button18
+  // Play button, start of the game
+  button18 = createButton("Play");
+  button18.mousePressed(gameStart);
+  button18.position(780, 750);
+  button18.hide();
+  button18.addClass("button18");
 }
 
 // basics of shooter game screen
 function shooterGameScreen() {
-  background(0);
   // loop for bullets in mini game ghost
   // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let bullet of bullets) {
@@ -340,7 +372,7 @@ function shooterGameScreen() {
   fill(255, 255, 255);
   textFont("VT323");
   textSize(30);
-  text("Killed ghost: " + score, 100, 600, 400, 400);
+  text("Killed ghosts: " + score, 50, 700, 400, 400);
   pop();
   // if you click, you shoot bullets at ghosts
   // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
@@ -356,8 +388,43 @@ function shooterGameScreen() {
 let state = "shooterGameScreenState";
 
 function draw() {
+  if (state === "start") {
+    background(0);
+    button18.show();
+    image(title1, 100, 200, 600, 80);
+    image(title2, 340, 350, 150, 80);
+    image(title3, 200, 500, 400, 80);
+    // draw stars
+    for (let i = 0; i < stars.length; i++) {
+      noStroke();
+      fill(255);
+      image(starImg, stars[i].x, stars[i].y, starSize, starSize);
+    }
+
+    // apply parallax effect
+    let dx = map(0, 0, width, -speed, speed);
+    let dy = map(0, 0, height, -speed, speed);
+    for (let i = 0; i < stars.length; i++) {
+      stars[i].x += dx;
+      stars[i].y += dy;
+      // wrap around edges
+      if (stars[i].x < 0) {
+        stars[i].x = width;
+      }
+      if (stars[i].x > width) {
+        stars[i].x = 0;
+      }
+      if (stars[i].y < 0) {
+        stars[i].y = height;
+      }
+      if (stars[i].y > height) {
+        stars[i].y = 0;
+      }
+    }
+  }
   if (state === "room") {
     background(bg1);
+    button18.hide();
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     push();
@@ -637,7 +704,7 @@ function draw() {
     forestWithHouse();
     button16.hide();
     collectedItems();
-    image(fishImg, 700, 740, 50, 50);
+    image(fishImg, 660, 735, 50, 50);
     image(heart, 325, 320, 12, 12);
     image(heart, 337, 319, 12, 12);
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
@@ -676,8 +743,8 @@ function draw() {
     xMiniGhost += random(-1, 1);
     yMiniGhost += random(-1, 1);
     collectedItems();
-    image(fishImg, 700, 740, 50, 50);
-    image(weapon, 650, 20, 100, 50);
+    image(fishImg, 660, 735, 50, 50);
+    image(weapon, 650, 20, wWeapon, hWeapon);
 
     // wall1.draw();
 
@@ -857,8 +924,7 @@ function draw() {
     button10.hide();
 
     collectedItems();
-    image(fishImg, 700, 740, 50, 50);
-    image(weapon, xWeapon, yWeapon, 100, 50);
+    image(fishImg, 660, 735, 50, 50);
     image(evilGhost, xEvilGhost, yEvilGhost, 200, 200);
     xEvilGhost += random(-1, 1);
     yEvilGhost += random(-1, 1);
@@ -982,8 +1048,8 @@ function draw() {
       yMainCharacter = 100;
     }
     if (
-      xWeapon > 699 &&
-      yWeapon < 11 &&
+      xWeapon > 500 &&
+      yWeapon < 200 &&
       xMainCharacter > 500 &&
       yMainCharacter > 200 &&
       yMainCharacter < 300
@@ -991,15 +1057,20 @@ function draw() {
       xMainCharacter = 450;
       yMainCharacter = 250;
     }
+
     if (xMainCharacter > 690 && yMainCharacter < 100) {
-      xWeapon = 700;
-      yWeapon = 700;
+      xWeapon = 710;
+      yWeapon = 740;
+      wWeapon = 70;
+      hWeapon = 35;
     }
+
     if (xMainCharacter > xEvilGhost && yMainCharacter > yEvilGhost) {
       battle();
     }
     image(mazeBg, 0, 0, 800, 800);
     push();
+    image(weapon, xWeapon, yWeapon, wWeapon, hWeapon);
 
     // Calculate the position of the eyes based on xMainCharacter and yMainCharacter
     let xEyes = map(xMainCharacter, 0, width, 210, 300);
@@ -1015,7 +1086,8 @@ function draw() {
     pop();
   }
   if (state === "shooterGameScreenState") {
-    background(bg1);
+    background(0);
+    image(grayBg, 0, 0, 800, 800);
     shooterGameScreen();
   }
   if (state === "youLost") {
@@ -1033,7 +1105,7 @@ function draw() {
     button11.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     collectedItems();
-    image(fishImg, 700, 740, 50, 50);
+    image(fishImg, 660, 735, 50, 50);
     image(momImg, 450, 400, 160, 160);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
@@ -1099,7 +1171,7 @@ function collectedItems() {
   strokeWeight(4);
   rect(600, 700, 200, 100);
   pop();
-  image(cookie, 600, 690, 100, 150);
+  image(cookie, 620, 720, 50, 80);
   push();
   textSize(20);
   fill(255);
@@ -1231,10 +1303,7 @@ function battle() {
 
 function youLost() {
   background(0);
-  fill(255, 255, 255);
-  textSize(70);
-  textFont("VT323");
-  text("You lost!", 270, 100, 300, 300);
+  image(gameOver, 150, 120, 500, 500);
 }
 function playAgain() {
   state = "newGame";
@@ -1345,7 +1414,6 @@ function dialogWithLoveCatText() {
 function forestWithHouseAfterDialogWithCat() {
   state = "forestWithHouseAfterDialogWithCat";
 }
-
-// function music() {
-//   mySound.play();
-// }
+function gameStart() {
+  state = "room";
+}
