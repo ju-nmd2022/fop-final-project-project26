@@ -1,5 +1,5 @@
 body {
-  background-color: wheat;
+  background-color: black;
   margin: 100px;
   margin-left: 450px;
 }
@@ -15,6 +15,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button1:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button2 {
   font-size: 1.2em;
@@ -27,6 +32,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button2:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button3 {
   font-size: 1.2em;
@@ -39,8 +49,12 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
 }
-
+.button3:hover {
+  transform: scale(0.9);
+  cursor: pointer;
+}
 .button4 {
   font-size: 1.2em;
   color: white;
@@ -52,6 +66,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button4:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button5 {
   font-size: 1.2em;
@@ -64,6 +83,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button5:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 
 .button6 {
@@ -77,8 +101,12 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
 }
-
+.button6:hover {
+  transform: scale(0.9);
+  cursor: pointer;
+}
 .button7 {
   font-size: 1.2em;
   color: white;
@@ -90,6 +118,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button7:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button8 {
   font-size: 1.2em;
@@ -102,6 +135,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button8:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button9 {
   font-size: 1.2em;
@@ -114,6 +152,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button9:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button10 {
   font-size: 1.2em;
@@ -126,6 +169,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button10:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button11 {
   font-size: 1.2em;
@@ -138,6 +186,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button11:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button12 {
   font-size: 1.2em;
@@ -150,6 +203,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button12:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button13 {
   font-size: 1.2em;
@@ -162,6 +220,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button13:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button14 {
   font-size: 1.2em;
@@ -174,6 +237,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button14:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button15 {
   font-size: 1.2em;
@@ -186,6 +254,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button15:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button16 {
   font-size: 1.2em;
@@ -198,6 +271,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button16:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button17 {
   font-size: 1.2em;
@@ -210,6 +288,11 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button17:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 .button18 {
   font-size: 1.2em;
@@ -223,8 +306,46 @@ body {
   position: relative;
   box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
     inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button18:hover {
+  transform: scale(0.9);
+  cursor: pointer;
+}
+.button19 {
+  font-size: 1.2em;
+  color: white;
+  font-family: "VT323";
+  transition-duration: 1s;
+  width: 150px;
+  height: 50px;
+  background: black;
+  border: 0px;
+  position: relative;
+  box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
+    inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button19:hover {
+  transform: scale(0.9);
+  cursor: pointer;
 }
 
-/* .button18:hover {
-  background: red;
-} */
+.button20 {
+  font-size: 1.2em;
+  color: white;
+  font-family: "VT323";
+  transition-duration: 1s;
+  width: 150px;
+  height: 50px;
+  background: black;
+  border: 0px;
+  position: relative;
+  box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
+    inset 4px 0px 1px 1px lightgray;
+  transition: 1s;
+}
+.button20:hover {
+  transform: scale(0.9);
+  cursor: pointer;
+}

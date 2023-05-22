@@ -45,6 +45,19 @@ let title1;
 let title2;
 let title3;
 let gameOver;
+let rod;
+let catHint;
+let xCatHint = 50;
+let yCatHint = 150;
+let arrowUp;
+let arrowDown;
+let arrowLeft;
+let arrowRight;
+let ghostSprite;
+let grannySprite;
+let mainCharacterSprite;
+let catSprite;
+let meadow;
 
 let stars = []; // array to store the stars
 let speed = 0.1; // speed of parallax effect
@@ -157,16 +170,32 @@ function preload() {
   title3 = loadImage("otherImages/title3.png");
 
   gameOver = loadImage("otherImages/gameOver.png");
+
+  rod = loadImage("otherImages/rod.webp");
+
+  catHint = loadImage("otherImages/catHint.png");
+  arrowUp = loadImage("otherImages/arrowUp.png");
+  arrowDown = loadImage("otherImages/arrowDown.png");
+  arrowLeft = loadImage("otherImages/arrowLeft.png");
+  arrowRight = loadImage("otherImages/arrowRight.png");
+
+  ghostSprite = loadImage("otherImages/ghostSprite.png");
+  grannySprite = loadImage("otherImages/grannySprite.png");
+  catSprite = loadImage("otherImages/catSprite.png");
+  mainCharacterSprite = loadImage("mainCharacterAni/mainCharacterAni1.png");
+  meadow = loadImage("otherImages/meadow.png");
 }
 
 function setup() {
   noSmooth();
   c = createCanvas(800, 800);
+  c.style("position", "absolute");
+
   // images don't loose quality
   noSmooth();
   // loop for ghosts in mini game ghost
   // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     let enemy = {
       x: random(100, 700),
       y: random(height - 1200, height - 900),
@@ -271,7 +300,7 @@ function setup() {
   button10.addClass("button10");
   // button11
   // Jane has dialog with Tamashi after winning the mini game ghost
-  button11 = createButton("Oh, thank you");
+  button11 = createButton("Continue...");
   button11.mousePressed(finalScreen);
   button11.position(750, 830);
   button11.hide();
@@ -298,7 +327,7 @@ function setup() {
   button14.hide();
   button14.addClass("button14");
   // button15
-  // Jane accepts the cat's regueast, start of fishing mini game
+  // Jane accepts the cat's request, start of fishing mini game
   button15 = createButton("Ahhh... Okay");
   button15.mousePressed(fishingMiniGameState);
   button15.position(750, 830);
@@ -314,17 +343,70 @@ function setup() {
   // button17
   // Jane answers mom, end of the game
   button17 = createButton("Ahhh... It's a long story...");
-  button17.position(790, 800);
+  button17.mousePressed(thanks);
+  button17.position(760, 820);
   button17.hide();
   button17.addClass("button17");
+
+  button21 = createButton("Play again");
+  button21.mousePressed(gameFromTheBeggining);
+  button21.position(760, 730);
+  button21.hide();
+  button21.addClass("button17");
 
   // button18
   // Play button, start of the game
   button18 = createButton("Play");
-  button18.mousePressed(gameStart);
+  button18.mousePressed(descriptionOfGame);
   button18.position(780, 750);
   button18.hide();
   button18.addClass("button18");
+
+  button19 = createButton("Play");
+  button19.mousePressed(gameStart);
+  button19.position(600, 750);
+  button19.hide();
+  button19.addClass("button19");
+
+  button20 = createButton("I'm too scared o~o");
+  button20.mousePressed(backToStart);
+  button20.position(1000, 750);
+  button20.hide();
+  button20.addClass("button20");
+}
+function starBackground() {
+  for (let i = 0; i < stars.length; i++) {
+    noStroke();
+    fill(255);
+    image(starImg, stars[i].x, stars[i].y, starSize, starSize);
+  }
+
+  // apply parallax effect for stars
+  // dx and dy represent the change in the x and y coordinates of the stars
+  // map() function is used to map the value 0 from the range [0, 0] (i.e., the full range of the canvas width and height) to the range [-speed, speed]
+  //  It determines the speed at which the stars move in the x and y directions
+  let dx = map(0, 0, width, -speed, speed);
+  let dy = map(0, 0, height, -speed, speed);
+  for (let i = 0; i < stars.length; i++) {
+    // x and y position of specific star is actualized
+    // now it's now longer x and y but x and dy
+    stars[i].x += dx;
+    stars[i].y += dy;
+    // if star moves beyond the canva, the star is appearing on the opposite side of canva
+    // that's why the stars are always one the screen
+    if (stars[i].x < 0) {
+      stars[i].x = width;
+    }
+    if (stars[i].x > width) {
+      stars[i].x = 0;
+    }
+    if (stars[i].y < 0) {
+      stars[i].y = height;
+    }
+    if (stars[i].y > height) {
+      stars[i].y = 0;
+    }
+  }
 }
 
 // basics of shooter game screen
@@ -333,7 +415,7 @@ function shooterGameScreen() {
   // the next followed 7 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let bullet of bullets) {
     push();
-    fill(255, 0, 0);
+    fill(0, 0, 0);
     ellipse(bullet.x, bullet.y, 10);
     pop();
     bullet.y = bullet.y - 5;
@@ -342,7 +424,7 @@ function shooterGameScreen() {
   // loop for ghosts in mini game ghost
   // the next followed 5 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let enemy of enemies) {
-    image(ghostEnemy, enemy.x + 50, enemy.y + 50, 100, 100);
+    image(ghostEnemy, enemy.x, enemy.y, 100, 100);
     enemy.y = enemy.y + 1;
     // enemy.x += random(-2, 2);
   }
@@ -350,19 +432,20 @@ function shooterGameScreen() {
   // the next followed 14 lines of code are imported from this tutorial: https://www.youtube.com/watch?v=GusFmfBmJmc
   for (let enemy of enemies) {
     for (let bullet of bullets) {
-      if (dist(enemy.x, enemy.y, bullet.x + 5, bullet.y + 5) < 10) {
+      // if distance between bullet and ghost enemy is 10 (so really small), certain enemy ghost disappear and score is higher
+      if (dist(enemy.x + 50, enemy.y + 50, bullet.x + 5, bullet.y + 5) < 10) {
         enemies.splice(enemies.indexOf(enemy), 1);
         score += 1;
       }
-      if (dist(enemy.x, enemy.y, mouseX, height - 100) < 10) {
+      if (dist(enemy.x, enemy.y, (0, 1000), 800) < 10) {
         state = "youLost";
       }
-      // if enemy touches the bottom of the screen you lose
+      // if enemy touches the bottom of the screen you lose and different screen appears
       if (enemy.y > 800) {
         state = "youLost";
       }
       // if you hit more than 9 ghosts you won
-      if (score > 9) {
+      if (score > 19) {
         state = "exitFromTheForest";
       }
     }
@@ -385,46 +468,42 @@ function shooterGameScreen() {
   }
 }
 
-let state = "shooterGameScreenState";
+let state = "start";
 
 function draw() {
+  if (state === "descriptionState") {
+    background(0);
+    button19.show();
+    button20.show();
+    button18.hide();
+    button21.hide();
+    descriptionScreen();
+    starBackground();
+  }
   if (state === "start") {
     background(0);
+    button17.hide();
     button18.show();
+    button20.hide();
+    button19.hide();
+    button21.hide();
+    // text on the start screen
     image(title1, 100, 200, 600, 80);
     image(title2, 340, 350, 150, 80);
     image(title3, 200, 500, 400, 80);
+    fill(255);
+    textSize(20);
+    textFont("VT323");
+    text("Created by Klara Swiecicka and Olha Prylutska.", 10, 770, 600, 200);
+    text("© 2023 nanannanan. All rights reserved.", 480, 770, 600, 200);
     // draw stars
-    for (let i = 0; i < stars.length; i++) {
-      noStroke();
-      fill(255);
-      image(starImg, stars[i].x, stars[i].y, starSize, starSize);
-    }
-
-    // apply parallax effect
-    let dx = map(0, 0, width, -speed, speed);
-    let dy = map(0, 0, height, -speed, speed);
-    for (let i = 0; i < stars.length; i++) {
-      stars[i].x += dx;
-      stars[i].y += dy;
-      // wrap around edges
-      if (stars[i].x < 0) {
-        stars[i].x = width;
-      }
-      if (stars[i].x > width) {
-        stars[i].x = 0;
-      }
-      if (stars[i].y < 0) {
-        stars[i].y = height;
-      }
-      if (stars[i].y > height) {
-        stars[i].y = 0;
-      }
-    }
+    starBackground();
   }
   if (state === "room") {
     background(bg1);
-    button18.hide();
+    button17.hide();
+    button20.hide();
+    button19.hide();
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     push();
@@ -447,16 +526,16 @@ function draw() {
     }
     // character cannot go beyond the canva, when character is close to the wall, direction of movement is opposite
     if (xMainCharacter < 50) {
-      xMainCharacter += 1;
+      xMainCharacter += 2;
     }
-    if (xMainCharacter > 500) {
-      xMainCharacter -= 1;
+    if (xMainCharacter > 600) {
+      xMainCharacter -= 2;
     }
     if (yMainCharacter < 0) {
-      yMainCharacter += 1;
+      yMainCharacter += 2;
     }
-    if (yMainCharacter > 750) {
-      yMainCharacter -= 1;
+    if (yMainCharacter > 500) {
+      yMainCharacter -= 2;
     }
     // if character is near table it comes back to the specific position, character cannot stand on the furnitures
     if (
@@ -479,8 +558,7 @@ function draw() {
   }
   //play again after failing
   if (state === "newGame") {
-    background(bg1);
-    // music();
+    button17.hide();
     button5.hide();
     button6.hide();
 
@@ -504,18 +582,18 @@ function draw() {
       }
     }
     if (xMainCharacter < 50) {
-      xMainCharacter += 1;
+      xMainCharacter += 2;
     }
     if (xMainCharacter > 750) {
-      xMainCharacter -= 1;
+      xMainCharacter -= 2;
     }
     if (yMainCharacter < 0) {
-      yMainCharacter += 1;
+      yMainCharacter += 2;
     }
     if (yMainCharacter > 750) {
-      yMainCharacter -= 1;
+      yMainCharacter -= 2;
     }
-
+    //  if character is in the specific position image of cloud with text it's appearing
     if (xMainCharacter > 100 && xMainCharacter < 600 && yMainCharacter > 200) {
       cloudText();
     }
@@ -524,7 +602,7 @@ function draw() {
       state = "dialogWithGrannyState";
     }
   }
-
+  // dialog with grandma starts, all dialog in codes are made in similar way
   if (state === "dialogWithGrannyState") {
     push();
     clear();
@@ -575,13 +653,16 @@ function draw() {
     button4.hide();
     button5.show();
   }
+  // room screen is the same but now cookie is in block with collected items and character can go further
   if (state === "afterDialogWithGrannyState") {
     background(bg1);
     collectedItems();
-
     button5.hide();
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     image(grannyWatchingTv, 500, 300, 300, 300);
+    image(catHint, xCatHint, yCatHint, 100, 100);
+    yCatHint = random(yCatHint - 1, yCatHint + 1);
+    cloudHintRoom();
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
         xMainCharacter += 2;
@@ -596,17 +677,17 @@ function draw() {
         yMainCharacter += 2;
       }
     }
-    if (xMainCharacter < 50) {
-      xMainCharacter += 1;
+    if (xMainCharacter < 400) {
+      xMainCharacter += 2;
     }
-    if (xMainCharacter > 750) {
-      xMainCharacter -= 1;
+    if (xMainCharacter > 540) {
+      xMainCharacter -= 2;
     }
-    if (yMainCharacter < 0) {
-      yMainCharacter += 1;
+    if (yMainCharacter < 500) {
+      yMainCharacter += 2;
     }
     if (yMainCharacter > 750) {
-      yMainCharacter -= 1;
+      yMainCharacter -= 2;
     }
     if (xMainCharacter > 370 && xMainCharacter < 500 && yMainCharacter > 700) {
       state = "forestWithHouseState";
@@ -614,19 +695,18 @@ function draw() {
   }
   if (state === "forestWithHouseState") {
     forestWithHouse();
-
+    // flashing cat eyes
     pop();
     noStroke();
     fill(155, 0, 0, Math.abs(Math.sin(alpha) * 255));
     ellipse(332, 330, 7, 7);
+    // alpha is changing so eyes are "animated", they flash
     alpha = alpha + 0.3;
     fill(155, 0, 0, Math.abs(Math.sin(alpha) * 255));
     ellipse(345, 330, 7, 7);
     alpha = alpha + 0.3;
     pop();
-
     collectedItems();
-
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
@@ -642,29 +722,34 @@ function draw() {
         yMainCharacter += 2;
       }
     }
+    // character is moving in opposite direction if it's in certain place, all boundaries in the game are made in similar way
     if (xMainCharacter < 100) {
       xMainCharacter += 2;
     }
-    if (xMainCharacter > 200 && xMainCharacter < 300 && yMainCharacter < 600) {
-      yMainCharacter += 10;
+    if (xMainCharacter > 150 && xMainCharacter < 350 && yMainCharacter < 600) {
+      yMainCharacter += 5;
     }
     if (xMainCharacter > 370 && xMainCharacter < 500 && yMainCharacter > 700) {
       xMainCharacter = 100;
       yMainCharacter = 100;
     }
     if (xMainCharacter > 400) {
-      xMainCharacter -= 3;
+      xMainCharacter -= 2;
+    }
+    if (yMainCharacter < 0) {
+      yMainCharacter += 2;
     }
     if (yMainCharacter > 600) {
-      yMainCharacter -= 3;
+      yMainCharacter -= 2;
     }
+    // if character is in certain position, dialog with cat starts
     if (xMainCharacter > 350 && yMainCharacter < 400) {
       state = "dialogWithCatState";
     }
   }
+  // dialog with cat
   if (state === "dialogWithCatState") {
     background(0);
-
     image(catAni, 0, 0, 800, 800);
     dialogWithGrannyRect();
     dialogWithCat();
@@ -672,7 +757,6 @@ function draw() {
   }
   if (state === "dialogWithCatState2") {
     background(0);
-
     image(catAni, 0, 0, 800, 800);
     dialogWithGrannyRect();
     dialogWithCat2Text();
@@ -731,13 +815,16 @@ function draw() {
     if (xMainCharacter > 500 && yMainCharacter > 200) {
       xMainCharacter -= 1;
     }
+    if (yMainCharacter < 100) {
+      yMainCharacter += 1;
+    }
+    // if in character is on top right corner of the screen, screen with maze is appearing
     if (xMainCharacter > 750 && yMainCharacter < 150) {
       state = "maze";
     }
   }
   if (state === "maze") {
     image(grayBg, 0, 0, 800, 800);
-
     // trembling position of Tamashi
     image(miniGhost, xMiniGhost, yMiniGhost, 150, 150);
     xMiniGhost += random(-1, 1);
@@ -745,9 +832,6 @@ function draw() {
     collectedItems();
     image(fishImg, 660, 735, 50, 50);
     image(weapon, 650, 20, wWeapon, hWeapon);
-
-    // wall1.draw();
-
     animation(mainCharacterAni, xMainCharacter, yMainCharacter);
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
@@ -775,6 +859,11 @@ function draw() {
     if (yMainCharacter > 750) {
       yMainCharacter -= 2;
     }
+    if (xMainCharacter < 150 && yMainCharacter < 140) {
+      yCatHint = random(700 - 1, 700 + 1);
+      image(catHint, xCatHint, yCatHint, 100, 100);
+      cloudHintBushes();
+    }
 
     push();
     noStroke();
@@ -790,7 +879,7 @@ function draw() {
       yMainCharacter < yWall1 + heightWall1 + 30
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
 
     push();
@@ -806,7 +895,7 @@ function draw() {
       yMainCharacter > yWall2 - heightWall2 + 500
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
     push();
     noStroke();
@@ -820,7 +909,7 @@ function draw() {
       yMainCharacter < yObstacle2 + heightObstacle2
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
 
     push();
@@ -836,7 +925,7 @@ function draw() {
       yMainCharacter < yWall3 + heightWall3 + 30
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
     push();
     noStroke();
@@ -850,7 +939,7 @@ function draw() {
       yMainCharacter < yObstacle1 + heightObstacle1
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
     push();
     noStroke();
@@ -864,14 +953,15 @@ function draw() {
       yMainCharacter < yObstacle3 + heightObstacle3
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
+    // if character is in certain position, dialog with Tamashi (miniGhost) starts
     if (yMainCharacter > 500 && xMainCharacter > 0) {
       state = "ghostState";
     }
     if (xMainCharacter > 700) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
 
     image(mazeBg, 0, 0, 800, 800);
@@ -891,7 +981,7 @@ function draw() {
 
     pop();
   }
-
+  // dialog with Tamashi
   if (state === "ghostState") {
     ghostScreen();
     dialogWithGrannyRect();
@@ -919,13 +1009,15 @@ function draw() {
     button9.hide();
     button10.show();
   }
+  // screen with maze but Tamashi disapeared, evil ghost is on the screen
   if (state === "mazeAfterGhost") {
     image(grayBg, 0, 0, 800, 800);
-    button10.hide();
 
+    button10.hide();
     collectedItems();
     image(fishImg, 660, 735, 50, 50);
     image(evilGhost, xEvilGhost, yEvilGhost, 200, 200);
+    // trembling animation of evil ghost
     xEvilGhost += random(-1, 1);
     yEvilGhost += random(-1, 1);
 
@@ -971,7 +1063,7 @@ function draw() {
       yMainCharacter < yWall1 + heightWall1 + 30
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
 
     push();
@@ -987,7 +1079,7 @@ function draw() {
       yMainCharacter > yWall2 - heightWall2 + 500
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
     push();
     noStroke();
@@ -1001,7 +1093,7 @@ function draw() {
       yMainCharacter < yObstacle2 + heightObstacle2
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
 
     push();
@@ -1017,7 +1109,7 @@ function draw() {
       yMainCharacter < yWall3 + heightWall3 + 30
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
     push();
     noStroke();
@@ -1031,7 +1123,7 @@ function draw() {
       yMainCharacter < yObstacle1 + heightObstacle1
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
     push();
     noStroke();
@@ -1045,8 +1137,9 @@ function draw() {
       yMainCharacter < yObstacle3 + heightObstacle3
     ) {
       xMainCharacter = 100;
-      yMainCharacter = 100;
+      yMainCharacter = 150;
     }
+    // if character didn't take the gun character cannot go further
     if (
       xWeapon > 500 &&
       yWeapon < 200 &&
@@ -1057,32 +1150,41 @@ function draw() {
       xMainCharacter = 450;
       yMainCharacter = 250;
     }
-
+    if (
+      xWeapon > 500 &&
+      yWeapon < 200 &&
+      xMainCharacter > 400 &&
+      yMainCharacter > 200 &&
+      yMainCharacter < 300
+    ) {
+      yCatHint = random(700 - 1, 700 + 1);
+      image(catHint, xCatHint, yCatHint, 100, 100);
+      cloudHintMaze();
+    }
+    // if character is next to the weapon, weapon changes the position and size and it's in box with collected items
+    // because the weapon is not longer in initial position, character can go further
     if (xMainCharacter > 690 && yMainCharacter < 100) {
       xWeapon = 710;
       yWeapon = 740;
       wWeapon = 70;
       hWeapon = 35;
     }
-
+    // if character is next to the evil ghost, screen is changing and mini shooter game with enemy ghosts starts
     if (xMainCharacter > xEvilGhost && yMainCharacter > yEvilGhost) {
       battle();
     }
     image(mazeBg, 0, 0, 800, 800);
     push();
     image(weapon, xWeapon, yWeapon, wWeapon, hWeapon);
-
     // Calculate the position of the eyes based on xMainCharacter and yMainCharacter
     let xEyes = map(xMainCharacter, 0, width, 210, 300);
     let yEyes = map(yMainCharacter, 0, height, 150, 250);
     xEyes = constrain(xEyes, 210, 270);
     yEyes = constrain(yEyes, 130, 180);
-
     // Draw the red irises with the updated position
     fill(255, 0, 0);
     ellipse(xEyes - 10, yEyes, 10, 10);
     ellipse(xEyes + 10, yEyes, 10, 10);
-
     pop();
   }
   if (state === "shooterGameScreenState") {
@@ -1094,12 +1196,14 @@ function draw() {
     youLost();
     button6.show();
   }
+  // screen with dialog with Tamashi after winning the game with enemy ghosts
   if (state === "exitFromTheForest") {
     ghostScreen();
     dialogWithGrannyRect();
     dialogWithGhostAfterForest();
     button11.show();
   }
+  // background with forest, house and mom
   if (state === "finalScreenState") {
     background(screenWithMom);
     button11.hide();
@@ -1107,6 +1211,10 @@ function draw() {
     collectedItems();
     image(fishImg, 660, 735, 50, 50);
     image(momImg, 450, 400, 160, 160);
+    if (xMainCharacter > 500 && yMainCharacter > 400) {
+      xMainCharacter = 100;
+      yMainCharacter = 700;
+    }
     if ((mainCharacterAniMovement = true)) {
       if (kb.holding("right")) {
         xMainCharacter += 2;
@@ -1133,6 +1241,7 @@ function draw() {
     if (yMainCharacter > 650) {
       yMainCharacter -= 2;
     }
+
     if (xMainCharacter < 150 && yMainCharacter < 150) {
       xMainCharacter = 100;
       yMainCharacter = 700;
@@ -1146,7 +1255,11 @@ function draw() {
     if (yMainCharacter > 650) {
       yMainCharacter -= 1;
     }
-
+    if (xMainCharacter > 600 && yMainCharacter > 600) {
+      xMainCharacter = 100;
+      yMainCharacter = 800;
+    }
+    // if character is in certain position, dialog with mom starts
     if (xMainCharacter > 350 && yMainCharacter < 550) {
       state = "momState";
     }
@@ -1155,14 +1268,51 @@ function draw() {
     dialogWithMom();
     button17.show();
   }
+  if (state === "thanksState") {
+    button17.hide();
+    button21.show();
+    thanksScreen();
+  }
 }
-
+// all functions
 function cloudText() {
   image(cloud, 420, 120, 400, 400);
   fill(255);
   textSize(17);
   textFont("VT323");
   text("Jane, come here!", 515, 230, 400, 400);
+}
+function cloudHintRoom() {
+  push();
+  scale(-1, 1);
+  image(cloud, -490, 40, 600, 300);
+  pop();
+  fill(255);
+  textSize(20);
+  textFont("VT323");
+  text("Go to the door", 215, 120, 400, 400);
+}
+function cloudHintMaze() {
+  push();
+  scale(-1, 1);
+  image(cloud, -490, 600, 600, 300);
+  pop();
+  fill(255);
+  textSize(17);
+  textFont("VT323");
+  text("Remember about the gun,", 200, 670, 400, 400);
+  text("ghosts are dangerous", 200, 687, 400, 400);
+}
+function cloudHintBushes() {
+  push();
+  scale(-1, 1);
+  image(cloud, -490, 600, 600, 300);
+  pop();
+  fill(255);
+  textSize(17);
+  textFont("VT323");
+  text("Be careful, there are", 200, 670, 400, 400);
+  text("wild cats in the bushes", 200, 687, 400, 400);
 }
 function collectedItems() {
   push();
@@ -1171,7 +1321,7 @@ function collectedItems() {
   strokeWeight(4);
   rect(600, 700, 200, 100);
   pop();
-  image(cookie, 620, 720, 50, 80);
+  image(cookie, 620, 720, 80, 100);
   push();
   textSize(20);
   fill(255);
@@ -1196,7 +1346,7 @@ function dialogWithGranny() {
 function dialogWithGranny2() {
   state = "dialogWithGranny2State";
   let dialogWithGrannyText2 =
-    "Here, I baked some cookies for your mom, could you bring it to her?";
+    "Here, I baked some cookies for your mom, could you bring them to her?";
   let numChars2 = min(dialogWithGrannyText2.length, floor(frameCount / 10));
   fill(255);
   textSize(25);
@@ -1239,12 +1389,12 @@ function ghostScreen() {
 }
 
 function dialogWithGhost() {
-  let dialogWithGhost1 = "Hey? Is anyone here? ";
+  let dialogWithGhost1 = "Hey? Is anyone here?";
   let numCharsGhost1 = min(dialogWithGhost1.length, floor(frameCount / 10));
   fill(255);
   textSize(30);
   textFont("VT323");
-  text(dialogWithGhost1.substring(0, numCharsGhost1), 250, 700);
+  text(dialogWithGhost1.substring(0, numCharsGhost1), 270, 700);
 }
 
 function dialogWithGhost2() {
@@ -1264,9 +1414,6 @@ function dialogWithGhost3() {
 }
 
 function dialogWithGhostText3() {
-  // let dialogWithGhost3 =
-  "I fought with his army and was defeated. Now my soul is forever stuck in this maze and YOU can help both of us.";
-  // let numCharsGhost3 = min(dialogWithGhost3.length, floor(frameCount / 10));
   fill(255);
   textSize(25);
   textFont("VT323");
@@ -1278,20 +1425,19 @@ function dialogWithGhostText3() {
     100
   );
   text("forever stuck in this maze and YOU can help me!", 150, 680, 1000, 100);
-  // text(dialogWithGhost3.substring(0, numCharsGhost3), 50, 700);
 }
 function dialogWithGhost4() {
   state = "dialogWithGhostState3";
 }
 
 function dialogWithGhostText4() {
-  let dialogWithGhost4 =
-    "Jane, you will face his army in the battle. You have only one chance to get out of here.";
+  textSize(25);
+  let dialogWithGhost4 = "Jane, you will face his army in the battle.";
   let numCharsGhost4 = min(dialogWithGhost4.length, floor(frameCount / 10));
   fill(255);
-  textSize(20);
   textFont("VT323");
-  text(dialogWithGhost4.substring(0, numCharsGhost4), 50, 700);
+  text(dialogWithGhost4.substring(0, numCharsGhost4), 170, 650);
+  text("You have only one chance to get out of here.", 170, 700);
 }
 
 function continueGame() {
@@ -1310,12 +1456,11 @@ function playAgain() {
 }
 
 function dialogWithGhostAfterForest() {
-  let dialogWithGhostAfterForest =
-    "Now my soul is free. I have a precious gift for you.";
+  let dialogWithGhostAfterForest = "Now my soul is free. Thank you.";
   fill(255);
   textSize(30);
   textFont("VT323");
-  text(dialogWithGhostAfterForest, 100, 650, 800, 700);
+  text(dialogWithGhostAfterForest, 200, 650, 800, 700);
 }
 function finalScreen() {
   state = "finalScreenState";
@@ -1362,25 +1507,28 @@ function dialogWithCat3Text() {
     100
   );
 }
+// function that changes state so basically screen
 function fishingMiniGameState() {
   state = "fishingMiniGameState";
 }
 function fishingMiniGame() {
   image(water, 0, 0, 800, 800);
-  let rodX1 = 400;
-  let rodY1 = 700;
-  let rodX2 = mouseX;
-  let rodY2 = mouseY;
+
+  // let rodX1 = 400;
+  // let rodY1 = 700;
+  let rodX = mouseX;
+  let rodY = mouseY;
   push();
   fill(0, 0, 0);
-  line(rodX1, rodY1, rodX2, rodY2);
-  ellipse(rodX1, rodY1, 7, 7);
-  ellipse(rodX2, rodY2, 7, 7);
+  // line(rodX1, rodY1, rodX2, rodY2);
+  // ellipse(rodX1, rodY1, 7, 7);
+  image(rod, rodX - 80, rodY - 80);
   pop();
   for (let fish of fishes) {
     image(fishImg, fish.x, fish.y, 100, 100);
     fish.x += random(-2, 2);
     fish.y += random(-2, 2);
+    // if distance between fish and mouse position is really small, certain fish disappear and score is incrementing
     if (dist(fish.x + 50, fish.y + 50, mouseX, mouseY) < 10) {
       fishes.splice(fishes.indexOf(fish), 1);
       fishScore += 1;
@@ -1416,4 +1564,57 @@ function forestWithHouseAfterDialogWithCat() {
 }
 function gameStart() {
   state = "room";
+}
+function gameFromTheBeggining() {
+  state = "start";
+  yMainCharacter = 100;
+  xMainCharacter = 100;
+}
+function descriptionOfGame() {
+  state = "descriptionState";
+}
+function descriptionScreen() {
+  fill(255);
+  textSize(35);
+  textFont("VT323");
+  text("In the game you are Jane, a young NMD student", 100, 100);
+  text("You have a special mission from your grandma to do", 70, 150);
+  text("and you go on dangerous journey", 190, 200);
+  text("to the hunted forest", 270, 250);
+  text("Move the character with arrow keys:", 180, 400);
+  textSize(45);
+  text("Are you ready?", 300, 320);
+  image(arrowUp, 370, 430, 100, 100);
+  image(arrowDown, 370, 525, 100, 100);
+  image(arrowLeft, 300, 485, 100, 100);
+  image(arrowRight, 420, 490, 100, 100);
+}
+function backToStart() {
+  state = "start";
+}
+function thanks() {
+  state = "thanksState";
+}
+function thanksScreen() {
+  background(0);
+  starBackground();
+  image(meadow, 0, 500, 800, 400);
+  image(catSprite, 100, 450, 150, 150);
+  image(ghostSprite, 200, 440, 150, 150);
+  image(mainCharacterSprite, 320, 440, 170, 170);
+  image(momImg, 440, 450, 170, 170);
+  image(grannySprite, 550, 455, 170, 170);
+  noStroke();
+  fill(255, 255, 255);
+  rect(80, 740, 10, 10);
+  textFont("VT323");
+  textSize(50);
+  text("Congratulations!", 255, 70, 200, 200);
+  textSize(40);
+  text("You completed the game!", 230, 160, 500, 200);
+  text("Hope you enjoyed the gameplay :)", 180, 230, 600, 200);
+  fill(0);
+  textSize(20);
+  text("Created by Klara Swiecicka and Olha Prylutska.", 10, 770, 600, 200);
+  text("© 2023 nanannanan. All rights reserved.", 480, 770, 600, 200);
 }
