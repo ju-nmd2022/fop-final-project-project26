@@ -466,7 +466,7 @@ function shooterGameScreen() {
   }
 }
 
-let state = "start";
+let state = "thanksState";
 
 function draw() {
   if (state === "descriptionState") {
@@ -493,7 +493,7 @@ function draw() {
     textSize(20);
     textFont("VT323");
     text("Created by Klara Swiecicka and Olha Prylutska.", 10, 770, 600, 200);
-    text("© 2023 nanannanan. All rights reserved.", 480, 770, 600, 200);
+    text("© 2023 CD Project Pink. All rights reserved.", 480, 770, 600, 200);
     // draw stars
     starBackground();
   }
@@ -1268,7 +1268,7 @@ function draw() {
   }
   if (state === "thanksState") {
     button17.hide();
-    button21.show();
+    // button21.show();
     thanksScreen();
   }
 }
@@ -1603,16 +1603,16 @@ function thanksScreen() {
   image(momImg, 440, 450, 170, 170);
   image(grannySprite, 550, 455, 170, 170);
   noStroke();
-  fill(255, 255, 255);
-  rect(80, 740, 10, 10);
+  // fill(255, 255, 255);
+  // rect(80, 740, 10, 10);
   textFont("VT323");
-  textSize(50);
-  text("Congratulations!", 255, 70, 200, 200);
-  textSize(40);
-  text("You completed the game!", 230, 160, 500, 200);
-  text("Hope you enjoyed the gameplay :)", 180, 230, 600, 200);
+  // textSize(50);
+  // text("Congratulations!", 255, 70, 200, 200);
+  // textSize(40);
+  // text("You completed the game!", 230, 160, 500, 200);
+  // text("Hope you enjoyed the gameplay :)", 180, 230, 600, 200);
   fill(0);
   textSize(20);
   text("Created by Klara Swiecicka and Olha Prylutska.", 10, 770, 600, 200);
-  text("© 2023 nanannanan. All rights reserved.", 480, 770, 600, 200);
+  text("© 2023 CD Project Pink. All rights reserved.", 445, 770, 600, 200);
 }
