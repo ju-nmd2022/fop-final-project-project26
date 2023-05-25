@@ -2,6 +2,7 @@ body {
   background-color: black;
   margin: 100px;
   margin-left: 450px;
+  overflow-y: hidden;
 }
 
 .button1 {
