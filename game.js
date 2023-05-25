@@ -437,11 +437,9 @@ function shooterGameScreen() {
         enemies.splice(enemies.indexOf(enemy), 1);
         score += 1;
       }
-      if (dist(enemy.x, enemy.y, (0, 1000), 800) < 10) {
-        state = "youLost";
-      }
+
       // if enemy touches the bottom of the screen you lose and different screen appears
-      if (enemy.y > 800) {
+      if (enemy.y > 700) {
         state = "youLost";
       }
       // if you hit more than 9 ghosts you won
@@ -1580,7 +1578,7 @@ function descriptionScreen() {
   text("In the game you are Jane, a young NMD student", 100, 100);
   text("You have a special mission from your grandma to do", 70, 150);
   text("and you go on dangerous journey", 190, 200);
-  text("to the hunted forest", 270, 250);
+  text("to the haunted forest", 270, 250);
   text("Move the character with arrow keys:", 180, 400);
   textSize(45);
   text("Are you ready?", 300, 320);
