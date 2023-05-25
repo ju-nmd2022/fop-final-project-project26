@@ -90,23 +90,6 @@ body {
   cursor: pointer;
 }
 
-.button6 {
-  font-size: 1.2em;
-  color: white;
-  font-family: "VT323";
-  width: 150px;
-  height: 50px;
-  background: black;
-  border: 0px;
-  position: relative;
-  box-shadow: inset -4px 2px 1px 1px grey, inset -4px -2px 1px 1px lightgray,
-    inset 4px 0px 1px 1px lightgray;
-  transition: 1s;
-}
-.button6:hover {
-  transform: scale(0.9);
-  cursor: pointer;
-}
 .button7 {
   font-size: 1.2em;
   color: white;

@@ -66,6 +66,7 @@ let starSize = 10;
 let bullets = [];
 let enemies = [];
 let score = 0;
+
 let fishes = [];
 let fishScore = 0;
 
@@ -202,15 +203,13 @@ function setup() {
     };
     enemies.push(enemy);
   }
-  // loop for fish in mini game fish
   for (let i = 0; i < 20; i++) {
     let fish = {
       x: random(100, 700),
-      y: random(100, 500),
+      y: random(100, 700),
     };
     fishes.push(fish);
   }
-
   for (let i = 0; i < 50; i++) {
     let star = {
       x: random(width),
@@ -258,14 +257,6 @@ function setup() {
   button5.position(750, 830);
   button5.hide();
   button5.addClass("button5");
-
-  // button6
-  // Play again after failed battle with ghost enemies
-  button6 = createButton("Play again");
-  button6.mousePressed(playAgain);
-  button6.position(780, 800);
-  button6.hide();
-  button6.addClass("button6");
 
   //button7
   // Jane is starting dialog with Tamashi
@@ -347,12 +338,6 @@ function setup() {
   button17.position(760, 820);
   button17.hide();
   button17.addClass("button17");
-
-  button21 = createButton("Play again");
-  button21.mousePressed(gameFromTheBeggining);
-  button21.position(760, 730);
-  button21.hide();
-  button21.addClass("button17");
 
   // button18
   // Play button, start of the game
@@ -474,7 +459,6 @@ function draw() {
     button19.show();
     button20.show();
     button18.hide();
-    button21.hide();
     descriptionScreen();
     starBackground();
   }
@@ -484,7 +468,6 @@ function draw() {
     button18.show();
     button20.hide();
     button19.hide();
-    button21.hide();
     // text on the start screen
     image(title1, 100, 200, 600, 80);
     image(title2, 340, 350, 150, 80);
@@ -554,52 +537,7 @@ function draw() {
       state = "dialogWithGrannyState";
     }
   }
-  //play again after failing
-  if (state === "newGame") {
-    button17.hide();
-    button5.hide();
-    button6.hide();
 
-    animation(mainCharacterAni, xMainCharacter, yMainCharacter);
-    push();
-
-    image(grannyWatchingTv, 500, 300, 300, 300);
-    pop();
-    if ((mainCharacterAniMovement = true)) {
-      if (kb.holding("right")) {
-        xMainCharacter += 2;
-      }
-      if (kb.holding("left")) {
-        xMainCharacter -= 2;
-      }
-      if (kb.holding("up")) {
-        yMainCharacter -= 2;
-      }
-      if (kb.holding("down")) {
-        yMainCharacter += 2;
-      }
-    }
-    if (xMainCharacter < 50) {
-      xMainCharacter += 2;
-    }
-    if (xMainCharacter > 750) {
-      xMainCharacter -= 2;
-    }
-    if (yMainCharacter < 0) {
-      yMainCharacter += 2;
-    }
-    if (yMainCharacter > 750) {
-      yMainCharacter -= 2;
-    }
-    //  if character is in the specific position image of cloud with text it's appearing
-    if (xMainCharacter > 100 && xMainCharacter < 600 && yMainCharacter > 200) {
-      cloudText();
-    }
-    // if character is close to the grandma, state is changing and dialog with grandma starts
-    if (xMainCharacter > 500 && yMainCharacter > 300) {
-      state = "dialogWithGrannyState";
-    }
-  }
   // dialog with grandma starts, all dialog in codes are made in similar way
   if (state === "dialogWithGrannyState") {
     push();
@@ -1192,7 +1130,6 @@ function draw() {
   }
   if (state === "youLost") {
     youLost();
-    button6.show();
   }
   // screen with dialog with Tamashi after winning the game with enemy ghosts
   if (state === "exitFromTheForest") {
@@ -1268,7 +1205,6 @@ function draw() {
   }
   if (state === "thanksState") {
     button17.hide();
-    button21.show();
     thanksScreen();
   }
 }
@@ -1449,9 +1385,6 @@ function youLost() {
   background(0);
   image(gameOver, 150, 120, 500, 500);
 }
-function playAgain() {
-  state = "newGame";
-}
 
 function dialogWithGhostAfterForest() {
   let dialogWithGhostAfterForest = "Now my soul is free. Thank you.";
@@ -1530,12 +1463,10 @@ function fishingMiniGame() {
       state = "loveCatState";
     }
   }
-  push();
   fill(0);
   textFont("VT323");
   textSize(30);
   text("Caught fish: " + fishScore, 100, 700, 400, 400);
-  pop();
 }
 
 function dialogWithLoveCatText() {
@@ -1558,11 +1489,7 @@ function forestWithHouseAfterDialogWithCat() {
 function gameStart() {
   state = "room";
 }
-function gameFromTheBeggining() {
-  state = "start";
-  yMainCharacter = 100;
-  xMainCharacter = 100;
-}
+
 function descriptionOfGame() {
   state = "descriptionState";
 }
